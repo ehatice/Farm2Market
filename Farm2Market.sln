@@ -3,21 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{430E5BB7-0D13-40D9-8169-37F4E3FA4B6E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{430E5BB7-0D13-40D9-8169-37F4E3FA4B6E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastucture", "Infrastucture", "{154DD0A8-498C-4E80-8367-FF9258FBA8C6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{E1CFE9C0-EAC5-4CB9-801A-EA6D089F4996}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{E1CFE9C0-EAC5-4CB9-801A-EA6D089F4996}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farm2Market.Domain", "Core\Farm2Market.Domain\Farm2Market.Domain.csproj", "{A348CC52-6BEA-49FD-A23E-223DC06641D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farm2Market.Domain", "Core\Farm2Market.Domain\Farm2Market.Domain.csproj", "{A348CC52-6BEA-49FD-A23E-223DC06641D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farm2Market.Application", "Core\Farm2Market.Application\Farm2Market.Application.csproj", "{D0C7046C-F07C-4FCD-A2CF-A35C42CFBAF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farm2Market.Infrastructure", "Infrastructure\Farm2Market.Infrastructure\Farm2Market.Infrastructure.csproj", "{3A5336C2-5900-4217-96CF-5175AD39B33C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farm2Market.Persistence", "Infrastructure\Farm2Market.Persistence\Farm2Market.Persistence.csproj", "{AE8AF06A-1EA7-4840-B841-72E95C22F260}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farm2Marrket.Application", "Applicaiton\Farm2Marrket.Application\Farm2Marrket.Application.csproj", "{7C59C4FB-DD74-4E03-8090-2A300772376E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farm2Market.Infrastructure", "Infrastructure\Farm2Market.Infrastructure\Farm2Market.Infrastructure.csproj", "{3A5336C2-5900-4217-96CF-5175AD39B33C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{EF45A3D4-7AE4-4FE9-AB40-30926DBD5D3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farm2Market.API", "Presentation\Farm2Market.API\Farm2Market.API.csproj", "{87044A1E-5D25-4A36-93B8-FFA91EDE6AC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farm2Market.API", "API\Farm2Market.API\Farm2Market.API.csproj", "{6CC6D717-0626-42F7-80E2-8EF3187036CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,32 +29,27 @@ Global
 		{A348CC52-6BEA-49FD-A23E-223DC06641D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A348CC52-6BEA-49FD-A23E-223DC06641D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A348CC52-6BEA-49FD-A23E-223DC06641D4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D0C7046C-F07C-4FCD-A2CF-A35C42CFBAF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D0C7046C-F07C-4FCD-A2CF-A35C42CFBAF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D0C7046C-F07C-4FCD-A2CF-A35C42CFBAF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D0C7046C-F07C-4FCD-A2CF-A35C42CFBAF6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AE8AF06A-1EA7-4840-B841-72E95C22F260}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AE8AF06A-1EA7-4840-B841-72E95C22F260}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AE8AF06A-1EA7-4840-B841-72E95C22F260}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AE8AF06A-1EA7-4840-B841-72E95C22F260}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3A5336C2-5900-4217-96CF-5175AD39B33C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3A5336C2-5900-4217-96CF-5175AD39B33C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A5336C2-5900-4217-96CF-5175AD39B33C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A5336C2-5900-4217-96CF-5175AD39B33C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{87044A1E-5D25-4A36-93B8-FFA91EDE6AC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{87044A1E-5D25-4A36-93B8-FFA91EDE6AC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{87044A1E-5D25-4A36-93B8-FFA91EDE6AC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{87044A1E-5D25-4A36-93B8-FFA91EDE6AC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C59C4FB-DD74-4E03-8090-2A300772376E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C59C4FB-DD74-4E03-8090-2A300772376E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C59C4FB-DD74-4E03-8090-2A300772376E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C59C4FB-DD74-4E03-8090-2A300772376E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CC6D717-0626-42F7-80E2-8EF3187036CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CC6D717-0626-42F7-80E2-8EF3187036CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CC6D717-0626-42F7-80E2-8EF3187036CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CC6D717-0626-42F7-80E2-8EF3187036CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A348CC52-6BEA-49FD-A23E-223DC06641D4} = {430E5BB7-0D13-40D9-8169-37F4E3FA4B6E}
-		{D0C7046C-F07C-4FCD-A2CF-A35C42CFBAF6} = {430E5BB7-0D13-40D9-8169-37F4E3FA4B6E}
-		{AE8AF06A-1EA7-4840-B841-72E95C22F260} = {154DD0A8-498C-4E80-8367-FF9258FBA8C6}
 		{3A5336C2-5900-4217-96CF-5175AD39B33C} = {154DD0A8-498C-4E80-8367-FF9258FBA8C6}
-		{87044A1E-5D25-4A36-93B8-FFA91EDE6AC1} = {E1CFE9C0-EAC5-4CB9-801A-EA6D089F4996}
+		{7C59C4FB-DD74-4E03-8090-2A300772376E} = {EF45A3D4-7AE4-4FE9-AB40-30926DBD5D3D}
+		{6CC6D717-0626-42F7-80E2-8EF3187036CB} = {E1CFE9C0-EAC5-4CB9-801A-EA6D089F4996}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {178AFB05-F1A3-4152-BF2A-8B84672486E7}

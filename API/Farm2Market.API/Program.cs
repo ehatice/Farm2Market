@@ -1,4 +1,5 @@
 using Farm2Market.Domain;
+using Farm2Market.Domain.Entities;
 using Farm2Market.Infrastructure.Data;
 using Farm2Market.Infrastructure.Repository;
 using Farm2Marrket.Application.Manager;
@@ -17,12 +18,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
            options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
     new MySqlServerVersion(new Version(9, 0, 0))));
+builder.
+    Services.AddIdentity<AppUser, IdentityRole>()
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
 builder.Services.AddScoped<IUserService, UserManager>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddAuthorization();
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-    .AddEntityFrameworkStores<AppDbContext>();
+
 
 var app = builder.Build();
 
@@ -38,7 +42,7 @@ if (app.Environment.IsDevelopment())
 
 }
 
-app.MapIdentityApi<IdentityUser>();
+
 
 app.UseHttpsRedirection();
 

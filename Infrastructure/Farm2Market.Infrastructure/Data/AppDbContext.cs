@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Farm2Market.Infrastructure.Data
 {
-    public class AppDbContext: IdentityDbContext
+    public class AppDbContext: IdentityDbContext<AppUser>
     { 
         public AppDbContext(DbContextOptions<AppDbContext> options)
                 : base(options)
@@ -22,6 +22,7 @@ namespace Farm2Market.Infrastructure.Data
         }
         // Veritabanı tablolarını temsil eden DbSet'ler
         public DbSet<User> Users { get; set; }
+        public DbSet<Farmer> Farmers { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=root;database=farm2markett", new MySqlServerVersion(new Version(9, 0, 0)));
@@ -33,6 +34,8 @@ namespace Farm2Market.Infrastructure.Data
 
             // Fluent API ile tablo ayarları yapılabilir
             modelBuilder.Entity<User>().ToTable("Users");
+            modelBuilder.Entity<Farmer>().ToTable("Farmers");
+
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<User>().HasData(
                 new User

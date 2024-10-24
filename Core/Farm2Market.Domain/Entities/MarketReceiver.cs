@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Farm2Market.Domain.Entities
 {
-    public class Farmer:AppUser
+    public class MarketReceiver:AppUser
     {
-        public string Adress { get; set; }
-        
+        public string MarketName {  get; set; }
+        public string CompanyType { get; set; }
     }
 }

@@ -16,25 +16,30 @@ namespace Farm2Market.Infrastructure.Data
                 : base(options)
         {
         }
-        public AppDbContext()
-        {
+        //public AppDbContext()
+        //{
             
-        }
-        // Veritabanı tablolarını temsil eden DbSet'ler
+        //}
+
+   
         public DbSet<User> Users { get; set; }
         public DbSet<Farmer> Farmers { get; set; }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=root;database=farm2markett", new MySqlServerVersion(new Version(9, 0, 0)));
-        }
+        public DbSet<MarketReceiver> MarketReceivers { get; set; }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=root;database=farm2markett", new MySqlServerVersion(new Version(9, 0, 0)));
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Fluent API ile tablo ayarları yapılabilir
+     
             modelBuilder.Entity<User>().ToTable("Users");
             modelBuilder.Entity<Farmer>().ToTable("Farmers");
+            modelBuilder.Entity<MarketReceiver>().ToTable("MarketReceivers");
+
+
 
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<User>().HasData(

@@ -20,6 +20,12 @@ namespace Farm2Market.API.Controllers
         }
 
 
+        [HttpGet]
+        public IActionResult Ping()
+        {
+            return Ok("pong");
+        }
+
         [HttpPost]
         public async Task<IActionResult> Register(RegisterFarmerDto model)
         {

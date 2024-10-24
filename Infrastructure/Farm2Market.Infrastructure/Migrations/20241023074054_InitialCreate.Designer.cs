@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Farm2Market.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241022141002_eren")]
-    partial class eren
+    [Migration("20241023074054_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -276,6 +276,21 @@ namespace Farm2Market.Infrastructure.Migrations
                     b.ToTable("Farmers", (string)null);
                 });
 
+            modelBuilder.Entity("Farm2Market.Domain.Entities.MarketReceiver", b =>
+                {
+                    b.HasBaseType("Farm2Market.Domain.Entities.AppUser");
+
+                    b.Property<string>("CompanyType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("MarketName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.ToTable("MarketReceivers", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -332,6 +347,15 @@ namespace Farm2Market.Infrastructure.Migrations
                     b.HasOne("Farm2Market.Domain.Entities.AppUser", null)
                         .WithOne()
                         .HasForeignKey("Farm2Market.Domain.Entities.Farmer", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Farm2Market.Domain.Entities.MarketReceiver", b =>
+                {
+                    b.HasOne("Farm2Market.Domain.Entities.AppUser", null)
+                        .WithOne()
+                        .HasForeignKey("Farm2Market.Domain.Entities.MarketReceiver", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

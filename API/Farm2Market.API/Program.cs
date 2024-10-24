@@ -9,6 +9,18 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+// CORS politikasý tanýmlama
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder=>
+        {
+            builder.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -42,6 +54,7 @@ if (app.Environment.IsDevelopment())
 
 }
 
+app.UseCors("AllowAll");
 
 
 app.UseHttpsRedirection();

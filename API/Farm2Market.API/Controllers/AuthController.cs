@@ -27,7 +27,7 @@ namespace Farm2Market.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterFarmerDto model)
+        public async Task<IActionResult> FarmerRegister(RegisterFarmerDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -45,6 +45,39 @@ namespace Farm2Market.API.Controllers
                UserName = model.UserName,
                Email = model.Email,
                Adress=model.Adress,
+               UserRole = RoleConsts.Farmer, 
+            };
+
+            // Kullanýcýyý kaydet
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (!result.Succeeded)
+                return StatusCode(500, new { message = "Kullanýcý oluþturulamadý.", errors = result.Errors });
+
+            return Ok(new { message = "Kayýt baþarýlý!" });
+        }
+        [HttpPost]
+        public async Task<IActionResult> MarketRegister(MarketReceiverDto model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            // Kullanýcý var mý kontrol et
+            var userExists = await _userManager.FindByNameAsync(model.UserName);
+            if (userExists != null)
+                return StatusCode(500, new { message = "Kullanýcý zaten mevcut." });
+
+            // Yeni kullanýcý oluþtur
+            var user = new MarketReceiver
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                UserName = model.UserName,
+                Email = model.Email,
+                Adress = model.Adress,
+                CompanyType = model.CompanyType,
+                MarketName = model.MarketName,
+                UserRole=RoleConsts.MarketReceiver
             };
 
             // Kullanýcýyý kaydet
@@ -77,7 +110,8 @@ namespace Farm2Market.API.Controllers
             var ecem = new LoginResponseDto
             {
                 UserName = user.UserName,
-                EmailConfirmed = user.EmailConfirmed
+                EmailConfirmed = user.EmailConfirmed,
+                UserRole = user.UserRole,
             };
 
             // Giriþ baþarýlý

@@ -10,5 +10,6 @@ namespace Farm2Market.Domain.Entities
     {
         public string MarketName {  get; set; }
         public string CompanyType { get; set; }
+        public string Adress { get; set; }
     }
 }

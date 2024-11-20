@@ -15,5 +15,8 @@ namespace Farm2Marrket.Application.DTOs
        public string Password { get; set; }
        public string Adress { get; set; }
 
+       
+
+
     }
 }

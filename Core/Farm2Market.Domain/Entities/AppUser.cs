@@ -13,5 +13,9 @@ namespace Farm2Market.Domain.Entities
         public string LastName { get; set; }
 
         public string UserRole { get; set; }
-    }
+
+        public bool EmailConfirmed { get; set; }
+
+		public int ConfirmationNumber { get; set; }
+	}
 }

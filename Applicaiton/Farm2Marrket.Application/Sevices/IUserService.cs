@@ -10,5 +10,7 @@ namespace Farm2Marrket.Application.Sevices
     public interface IUserService
     {
         Task AddUser(User user );
-    }
+        Task<bool> ConfirmNumber(string id, int number);
+
+	}
 }

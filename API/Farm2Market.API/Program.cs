@@ -3,6 +3,7 @@ using Farm2Market.Domain.Entities;
 using Farm2Market.Domain.Interfaces;
 using Farm2Market.Infrastructure.Data;
 using Farm2Market.Infrastructure.Repository;
+using Farm2Marrket.Application.DTOs;
 using Farm2Marrket.Application.Manager;
 using Farm2Marrket.Application.Sevices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -72,7 +73,21 @@ builder.Services.AddIdentityCore<AppUser>() //Role kendimiz yazdýk identity olma
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+	c.SwaggerDoc("v1", new OpenApiInfo
+	{
+		Title = "Example API",
+		Version = "v1",
+		Description = "An example of an ASP.NET Core Web API",
+		Contact = new OpenApiContact
+		{
+			Name = "Example Contact",
+			Email = "example@example.com",
+			Url = new Uri("https://example.com/contact"),
+		},
+	});
+}); ;
 builder.Services.AddDbContext<AppDbContext>(options =>
            options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
     new MySqlServerVersion(new Version(9, 0, 0))));
@@ -80,11 +95,17 @@ builder.
     Services.AddIdentity<AppUser, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
-
-
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+{
+	options.TokenLifespan = TimeSpan.FromHours(24); 
+});
 builder.Services.AddScoped<IUserService, UserManager>();
 builder.Services.AddScoped<IAppUserService, AppUserManager > ();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("SmtpSettings"));
+builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddControllersWithViews();
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
 
 builder.Services.AddScoped<IProductService, ProductManager>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -141,8 +162,11 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+	app.UseSwagger();
+	app.UseSwaggerUI(options =>
+	{
+		options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+	});
 
 }
 

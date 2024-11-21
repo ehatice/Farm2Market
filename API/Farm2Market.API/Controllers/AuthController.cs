@@ -2,6 +2,7 @@ using Farm2Market.Domain.Entities;
 using Farm2Marrket.Application.DTOs;
 using Farm2Marrket.Application.Manager;
 using Farm2Marrket.Application.Sevices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,15 +11,20 @@ namespace Farm2Market.API.Controllers
     [ApiController]
     [Route("api/[controller]/[action]")]
     public class AuthController : ControllerBase
+
     {
+        private readonly IAppUserService _appUserService;
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        public AuthController(UserManager<AppUser> service, SignInManager<AppUser> identityUser)
+        public AuthController(UserManager<AppUser> service, SignInManager<AppUser> identityUser, IAppUserService appUserService)
         {
             _userManager = service;
             _signInManager = identityUser;
+            _appUserService = appUserService;
+      
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
 
         [HttpGet]
         public IActionResult Ping()
@@ -96,7 +102,8 @@ namespace Farm2Market.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-   
+            
+
             var user = await _userManager.FindByNameAsync(model.UserName);
             if (user == null)
                 return Unauthorized(new { message = "Geçersiz kullanýcý adý veya þifre." });
@@ -107,15 +114,20 @@ namespace Farm2Market.API.Controllers
             if (!result.Succeeded)
                 return Unauthorized(new { message = "Geçersiz kullanýcý adý veya þifre." });
 
-            var ecem = new LoginResponseDto
+            var token = await _appUserService.GenerateToken(user);
+            
+
+            var LoginResponse = new LoginResponseDto
             {
                 UserName = user.UserName,
                 EmailConfirmed = user.EmailConfirmed,
                 UserRole = user.UserRole,
+                Token = token,
+                Email=user.Email
             };
 
-            // Giriþ baþarýlý
-            return Ok(ecem);
+            
+            return Ok(LoginResponse);
         }
     }
 }

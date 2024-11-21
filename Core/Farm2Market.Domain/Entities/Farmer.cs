@@ -9,6 +9,8 @@ namespace Farm2Market.Domain.Entities
     public class Farmer:AppUser
     {
         public string Adress { get; set; }
+
+        public ICollection<Product> Products { get; set; }
         
     }
 }

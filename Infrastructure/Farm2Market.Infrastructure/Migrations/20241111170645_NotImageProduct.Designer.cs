@@ -4,6 +4,7 @@ using Farm2Market.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Farm2Market.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241111170645_NotImageProduct")]
+    partial class NotImageProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,12 +37,6 @@ namespace Farm2Market.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
@@ -50,9 +47,6 @@ namespace Farm2Market.Infrastructure.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -86,9 +80,6 @@ namespace Farm2Market.Infrastructure.Migrations
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -128,34 +119,13 @@ namespace Farm2Market.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<Guid>("FarmerId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("FarmerId1")
-                        .HasColumnType("varchar(255)");
-
                     b.Property<string>("FullAddress")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<byte[]>("Image")
-                        .IsRequired()
-                        .HasColumnType("longblob");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint(1)")
-                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -172,16 +142,11 @@ namespace Farm2Market.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime");
-
                     b.Property<string>("WeightOrAmount")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FarmerId1");
 
                     b.ToTable("Products", (string)null);
                 });
@@ -382,15 +347,6 @@ namespace Farm2Market.Infrastructure.Migrations
                     b.ToTable("MarketReceivers", (string)null);
                 });
 
-            modelBuilder.Entity("Farm2Market.Domain.Entities.Product", b =>
-                {
-                    b.HasOne("Farm2Market.Domain.Entities.Farmer", "Farmer")
-                        .WithMany("Products")
-                        .HasForeignKey("FarmerId1");
-
-                    b.Navigation("Farmer");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -458,11 +414,6 @@ namespace Farm2Market.Infrastructure.Migrations
                         .HasForeignKey("Farm2Market.Domain.Entities.MarketReceiver", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Farm2Market.Domain.Entities.Farmer", b =>
-                {
-                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

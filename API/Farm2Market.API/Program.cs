@@ -24,12 +24,12 @@ var builder = WebApplication.CreateBuilder(args);
 // CORS politikasý tanýmlama
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder=>
-        {
-            builder.AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
-        });
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
 });
 var builderr = WebApplication.CreateBuilder(args);
 
@@ -75,47 +75,19 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-	c.SwaggerDoc("v1", new OpenApiInfo
-	{
-		Title = "Example API",
-		Version = "v1",
-		Description = "An example of an ASP.NET Core Web API",
-		Contact = new OpenApiContact
-		{
-			Name = "Example Contact",
-			Email = "example@example.com",
-			Url = new Uri("https://example.com/contact"),
-		},
-	});
-}); ;
-builder.Services.AddDbContext<AppDbContext>(options =>
-           options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
-    new MySqlServerVersion(new Version(9, 0, 0))));
-builder.
-    Services.AddIdentity<AppUser, IdentityRole>()
-            .AddEntityFrameworkStores<AppDbContext>()
-            .AddDefaultTokenProviders();
-builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
-{
-	options.TokenLifespan = TimeSpan.FromHours(24); 
-});
-builder.Services.AddScoped<IUserService, UserManager>();
-builder.Services.AddScoped<IAppUserService, AppUserManager > ();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("SmtpSettings"));
-builder.Services.AddTransient<IEmailService, EmailService>();
-builder.Services.AddControllersWithViews();
-builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
-
-builder.Services.AddScoped<IProductService, ProductManager>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
-
-
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "DivinationProject API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Example API",
+        Version = "v1",
+        Description = "An example of an ASP.NET Core Web API",
+        Contact = new OpenApiContact
+        {
+            Name = "Example Contact",
+            Email = "example@example.com",
+            Url = new Uri("https://example.com/contact"),
+        },
+    });
+    c.SwaggerDoc("v2", new OpenApiInfo { Title = "DivinationProject API", Version = "v2" });
 
     var securityScheme = new OpenApiSecurityScheme
     {
@@ -145,7 +117,32 @@ builder.Services.AddSwaggerGen(c =>
     };
 
     c.AddSecurityRequirement(securityRequirement);
+}); 
+builder.Services.AddDbContext<AppDbContext>(options =>
+           options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+    new MySqlServerVersion(new Version(9, 0, 0))));
+builder.
+    Services.AddIdentity<AppUser, IdentityRole>()
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+{
+    options.TokenLifespan = TimeSpan.FromHours(24);
 });
+builder.Services.AddScoped<IUserService, UserManager>();
+builder.Services.AddScoped<IAppUserService, AppUserManager>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("SmtpSettings"));
+builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddControllersWithViews();
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
+
+builder.Services.AddScoped<IProductService, ProductManager>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
+
+
 
 
 
@@ -162,11 +159,11 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	app.UseSwagger();
-	app.UseSwaggerUI(options =>
-	{
-		options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-	});
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+    });
 
 }
 

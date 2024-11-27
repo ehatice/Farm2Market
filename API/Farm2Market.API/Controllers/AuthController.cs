@@ -18,17 +18,24 @@ namespace Farm2Market.API.Controllers
         private readonly SignInManager<AppUser> _signInManager;
 		private readonly IEmailService _emailService;
 		private readonly IUserService _userService;
-		public AuthController(UserManager<AppUser> service, SignInManager<AppUser> identityUser, IEmailService emailService,IUserService userService)
+		public AuthController(UserManager<AppUser> service, SignInManager<AppUser> identityUser, IEmailService emailService,IUserService userService, IAppUserService appUserService )
         {
             _userManager = service;
             _signInManager = identityUser;
 			_emailService = emailService;
             _userService = userService;
+            _appUserService = appUserService;
 		}
 
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        //[Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet]
+        public IActionResult Ping()
+        {
+            return Ok("Pong");
+        }
 
-		[HttpPost("SendMail")]
+        [HttpPost("SendMail")]
 		public async Task<IActionResult> SendMail([FromBody] EmailRequest emailRequest)
 		{
 			await _emailService.SendEmailAsync(emailRequest.ToEmail, emailRequest.Subject, emailRequest.Body);

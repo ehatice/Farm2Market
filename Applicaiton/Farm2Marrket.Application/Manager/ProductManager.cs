@@ -18,7 +18,7 @@ namespace Farm2Marrket.Application.Manager
         {
             _productRepository = productRepository;
         }
-        public async Task AddProduct(ProductDto productDto)
+        public async Task AddProduct(Guid farmerId, ProductDto productDto)
         {
             
             byte[]? imageBytes = null;
@@ -45,11 +45,11 @@ namespace Farm2Marrket.Application.Manager
                 Category = productDto.Category,
                 Quality = productDto.Quality,
                 Price = productDto.Price,
+                FarmerId=farmerId,
                 Image = imageBytes ?? new byte[0],
-                FarmerId = productDto.FarmerId,
                 UnitType = productDto.UnitType,
-                CreatedDate = DateTime.Now
-
+                CreatedDate = DateTime.Now,
+                IsActive = productDto.IsActive,
             };
 
             
@@ -99,8 +99,9 @@ namespace Farm2Marrket.Application.Manager
                 Price = product.Price,
                 Image = product.Image != null ? Convert.ToBase64String(product.Image) : string.Empty, // byte[] -> Base64
                 UnitType = product.UnitType,
-                FarmerId = product.FarmerId
-            });
+                //FarmerId = product.FarmerId,
+                IsActive = product.IsActive
+            }); 
 
             return productDtos;
         }

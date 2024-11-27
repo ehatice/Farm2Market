@@ -8,6 +8,7 @@ namespace Farm2Marrket.Application.DTOs
 {
     public class ProductDto
     {
+        public  int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string WeightOrAmount { get; set; }
@@ -18,6 +19,6 @@ namespace Farm2Marrket.Application.DTOs
         public decimal Price { get; set; }
         public string Image { get; set; }
         public string UnitType { get; set; }
-        public Guid FarmerId { get; set; }
+        public bool IsActive { get; set; }
     }
 }

@@ -43,8 +43,5 @@ namespace Farm2Market.Infrastructure.Repository
                 .Where(p => p.FarmerId == farmerId && p.IsActive)
                 .ToListAsync();
         }
-
-
-
     }
 }

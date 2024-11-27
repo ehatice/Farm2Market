@@ -4,6 +4,7 @@ using Farm2Marrket.Application.Manager;
 using Farm2Marrket.Application.Sevices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 
 namespace Farm2Market.API.Controllers
@@ -17,11 +18,10 @@ namespace Farm2Market.API.Controllers
         {
             _productService = productService;
         }
-       // [Authorize(AuthenticationSchemes = "Bearer", Roles = "Farmer")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost]
         public async Task<IActionResult> AddProduct([FromBody] ProductDto productDto)
         {
-            
             if (productDto == null)
             {
                 return BadRequest("Product data is required.");
@@ -29,13 +29,32 @@ namespace Farm2Market.API.Controllers
 
             try
             {
-               
-                await _productService.AddProduct(productDto);
+                Guid userGuid;
+                // Token'dan kullanıcı ID'sini al
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (userId == null)
+                {
+                    return Unauthorized("Kullanıcı ID'si alınamadı.");
+                }
+                if (Guid.TryParse(userId, out userGuid))
+                {
+                    // Eğer userId başarılı bir şekilde GUID'e çevrilirse, işlemi burada yapabilirsiniz
+                    await _productService.AddProduct(userGuid, productDto);
+                }
+                else
+                {
+                    // Eğer çevrilemezse, uygun bir hata veya işlem yapabilirsiniz
+                    throw new ArgumentException("Geçersiz userId formatı. Lütfen doğru bir GUID girin.");
+                }
+                // Ürünü ekle
+    
+
                 return Ok(new { message = "Product added successfully." });
             }
             catch (Exception ex)
             {
-                
+                // Hata durumunda 500 döndür
                 return StatusCode(500, new { error = "An error occurred while adding the product.", details = ex.Message });
             }
         }
@@ -52,12 +71,15 @@ namespace Farm2Market.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("GetProductsByFarmer/{farmerId}")]
-        public async Task<IActionResult> GetProductsByFarmer(Guid farmerId)
+
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet]
+        public async Task<IActionResult> GetProductsByFarmer()
         {
             try
             {
-                // _productManager yerine _productService kullanıyoruz
+                var farmerId = new Guid(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
                 var products = await _productService.GetProductsByFarmerIdAsync(farmerId);
                 return Ok(products);
             }

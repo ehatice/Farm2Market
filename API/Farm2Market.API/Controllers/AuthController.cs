@@ -64,9 +64,9 @@ namespace Farm2Market.API.Controllers
             // Kullanýcý var mý kontrol et
             var userExists = await _userManager.FindByNameAsync(model.UserName);
             if (userExists != null)
-                return StatusCode(500, new { message = "Kullanýcý zaten mevcut." });
+                return Conflict(ApiResponse<string>.Failure("Bu kullanýcý adý zaten mevcut."));
 
-			Random random = new Random();
+            Random random = new Random();
 			int number = random.Next(1000, 10000);
 
 			// Yeni kullanýcý oluþtur
@@ -86,14 +86,20 @@ namespace Farm2Market.API.Controllers
 			//var confirmationlink = Url.Action("ConfirmMail", "Auth", new { token , email = user.Email, userId = user.Id });
 			
 
-
 			// Kullanýcýyý kaydet
 			var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
-                return StatusCode(500, new { message = "Kullanýcý oluþturulamadý.", errors = result.Errors });
+                return StatusCode(500, ApiResponse<string>.Failure("Kullanýcý oluþturulamadý."));
 
-            return Ok(new {  });
+            var responseDto = new FarmerRegisterResponseDto
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserName = user.UserName,
+                Email = user.Email,
+            };
+            return Ok(ApiResponse<object>.Success(responseDto));
         }
         [HttpPost]
         public async Task<IActionResult> MarketRegister(MarketReceiverDto model)
@@ -104,11 +110,11 @@ namespace Farm2Market.API.Controllers
             // Kullanýcý var mý kontrol et
             var userExists = await _userManager.FindByNameAsync(model.UserName);
             if (userExists != null)
-                return StatusCode(500, new { message = "Kullanýcý zaten mevcut." });
+                return Conflict(ApiResponse<string>.Failure("Bu kullanýcý adý zaten mevcut."));
 
-			// Yeni kullanýcý oluþtur
+            // Yeni kullanýcý oluþtur
 
-			Random random = new Random();
+            Random random = new Random();
 			int number = random.Next(1000, 10000);
 
 			var user = new MarketReceiver
@@ -136,9 +142,18 @@ namespace Farm2Market.API.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
-                return StatusCode(500, new { message = "Kullanýcý oluþturulamadý.", errors = result.Errors });
+                return StatusCode(500, ApiResponse<string>.Failure("Kullanýcý oluþturulamadý."));
+            var responseDto = new MarketReceiverResponseDto
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserName = user.UserName,
+                Email = user.Email,
+                MarketName = user.MarketName,
+                CompanyType= user.CompanyType,
+            };
+            return Ok(ApiResponse<Object>.Success(responseDto));
 
-            return Ok(new { message = "Kayýt baþarýlý!" });
         }
 
 
@@ -146,22 +161,20 @@ namespace Farm2Market.API.Controllers
         public async Task<IActionResult> Login(LoginDto model)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(ApiResponse<string>.Failure("Geçersiz model."));
 
-            
 
             var user = await _userManager.FindByNameAsync(model.UserName);
             if (user == null)
-                return Unauthorized(new { message = "Geçersiz kullanýcý adý veya þifre." });
+                return Unauthorized(ApiResponse<string>.Failure("Geçersiz kullanýcý adý veya þifre."));
 
-         
+
             var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: false);
 
             if (!result.Succeeded)
-                return Unauthorized(new { message = "Geçersiz kullanýcý adý veya þifre." });
+                return Unauthorized(ApiResponse<string>.Failure("Geçersiz kullanýcý adý veya þifre."));
 
             var token = await _appUserService.GenerateToken(user);
-            
 
             var LoginResponse = new LoginResponseDto
             {
@@ -171,9 +184,7 @@ namespace Farm2Market.API.Controllers
                 Token = token,
                 Email=user.Email
             };
-
-            
-            return Ok(LoginResponse);
+            return Ok(ApiResponse<LoginResponseDto>.Success(LoginResponse));
         }
     }
 }

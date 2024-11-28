@@ -24,7 +24,7 @@ namespace Farm2Market.API.Controllers
         {
             if (productDto == null)
             {
-                return BadRequest("Product data is required.");
+                return BadRequest(ApiResponse<string>.Failure("Product data is required."));
             }
 
             try
@@ -35,27 +35,28 @@ namespace Farm2Market.API.Controllers
 
                 if (userId == null)
                 {
-                    return Unauthorized("Kullanıcı ID'si alınamadı.");
+                    return Unauthorized(ApiResponse<string>.Failure("Kullanıcı ID'si alınamadı."));
                 }
                 if (Guid.TryParse(userId, out userGuid))
                 {
-                    // Eğer userId başarılı bir şekilde GUID'e çevrilirse, işlemi burada yapabilirsiniz
-                    await _productService.AddProduct(userGuid, productDto);
+
+                   var addedProduct =  await _productService.AddProduct(userGuid, productDto);
+                    return Ok(ApiResponse<ProductResponseDto>.Success(addedProduct));
+
+
                 }
                 else
                 {
                     // Eğer çevrilemezse, uygun bir hata veya işlem yapabilirsiniz
-                    throw new ArgumentException("Geçersiz userId formatı. Lütfen doğru bir GUID girin.");
+                    return BadRequest(ApiResponse<string>.Failure("Geçersiz userId formatı. Lütfen doğru bir GUID girin."));
                 }
-                // Ürünü ekle
-    
 
-                return Ok(new { message = "Product added successfully." });
+
             }
             catch (Exception ex)
             {
                 // Hata durumunda 500 döndür
-                return StatusCode(500, new { error = "An error occurred while adding the product.", details = ex.Message });
+        return StatusCode(500, ApiResponse<string>.Failure($"Urun eklenirken hata olustu: {ex.Message}"));
             }
         }
         [HttpDelete("{id}")]

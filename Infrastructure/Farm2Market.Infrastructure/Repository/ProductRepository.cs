@@ -26,7 +26,7 @@ namespace Farm2Market.Infrastructure.Repository
         }
         public async Task DeleteProductAsync(Product product)
         {
-            product.IsActive = false;  // Soft delete: ürünü pasif yap
+            product.IsActive = true;  // Soft delete: ürünü pasif yap
             product.DeletedDate = DateTime.Now;
 
             await _appDbContext.SaveChangesAsync();

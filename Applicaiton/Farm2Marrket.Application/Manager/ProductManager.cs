@@ -18,9 +18,10 @@ namespace Farm2Marrket.Application.Manager
         {
             _productRepository = productRepository;
         }
-        public async Task AddProduct(Guid farmerId, ProductDto productDto)
+        public async Task<ProductResponseDto> AddProduct(Guid farmerId, ProductDto productDto)
+
         {
-            
+
             byte[]? imageBytes = null;
             if (!string.IsNullOrEmpty(productDto.Image))
             {
@@ -49,7 +50,7 @@ namespace Farm2Marrket.Application.Manager
                 Image = imageBytes ?? new byte[0],
                 UnitType = productDto.UnitType,
                 CreatedDate = DateTime.Now,
-                IsActive = productDto.IsActive,
+          
             };
 
             
@@ -62,6 +63,19 @@ namespace Farm2Marrket.Application.Manager
                 Console.WriteLine("An error occurred while adding the product: " + ex.Message);
                 throw;
             }
+            var productResponse = new ProductResponseDto
+            {
+                Id = product.Id,
+                Name = product.Name,
+                WeightOrAmount= product.WeightOrAmount,
+                Address = product.Address,
+                Category= product.Category,
+                Quality = product.Quality,
+                Price = product.Price,
+                IsActive= product.IsActive,
+
+            };
+            return productResponse;
         }
 
         public async Task DeleteProductAsync(int id)
@@ -73,7 +87,7 @@ namespace Farm2Marrket.Application.Manager
                 throw new Exception("Ürün bulunamadı.");
             }
 
-            if (!product.IsActive)
+            if (product.IsActive)
             {
                 throw new Exception("Ürün zaten pasif durumda.");
             }
@@ -100,7 +114,7 @@ namespace Farm2Marrket.Application.Manager
                 Image = product.Image != null ? Convert.ToBase64String(product.Image) : string.Empty, // byte[] -> Base64
                 UnitType = product.UnitType,
                 //FarmerId = product.FarmerId,
-                IsActive = product.IsActive
+                //IsActive = product.IsActive
             }); 
 
             return productDtos;

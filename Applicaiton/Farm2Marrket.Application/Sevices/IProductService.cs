@@ -10,7 +10,7 @@ namespace Farm2Marrket.Application.Sevices
 {
     public interface IProductService
     {
-        Task AddProduct(Guid farmerId,ProductDto productDto);
+        Task<ProductResponseDto> AddProduct(Guid farmerId, ProductDto productDto);
         Task DeleteProductAsync(int productId);
         Task<bool> UpdateProductQuantity(int id, int amount);
 

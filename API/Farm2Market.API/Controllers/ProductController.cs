@@ -90,6 +90,28 @@ namespace Farm2Market.API.Controllers
         }
 
 
+		[HttpPost("UpdateProductQuantity")]
+		public async Task<IActionResult> UpdateProductQuantity(int id, int amount)
+		{
+			try
+			{
+				bool result = await _productService.UpdateProductQuantity(id, amount);
+				if (result)
+				{
+					return Ok("Ürün miktarı başarıyla güncellendi.");
+				}
+				else
+				{
+					return BadRequest("Ürün miktarı güncellenemedi.");
+				}
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
 
-    }
+
+
+	}
 }

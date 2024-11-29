@@ -12,7 +12,9 @@ namespace Farm2Marrket.Application.Sevices
     {
         Task AddProduct(Guid farmerId,ProductDto productDto);
         Task DeleteProductAsync(int productId);
-        Task<IEnumerable<ProductDto>> GetProductsByFarmerIdAsync(Guid farmerId);
+        Task<bool> UpdateProductQuantity(int id, int amount);
+
+		Task<IEnumerable<ProductDto>> GetProductsByFarmerIdAsync(Guid farmerId);
 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Farm2Market.Domain.Entities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ namespace Farm2Market.Domain.Interfaces
         Task AddAsync(Product product);
         Task DeleteProductAsync(Product product);
         Task<Product> GetByIdAsync(int id);
-        Task<IEnumerable<Product>> GetProductsByFarmerIdAsync(Guid farmerId);
+		Task UpdateProductQuantity(int id, int newQuantity);
+		Task<IEnumerable<Product>> GetProductsByFarmerIdAsync(Guid farmerId);
     }
 }

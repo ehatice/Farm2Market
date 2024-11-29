@@ -43,5 +43,18 @@ namespace Farm2Market.Infrastructure.Repository
                 .Where(p => p.FarmerId == farmerId && p.IsActive)
                 .ToListAsync();
         }
-    }
+
+		public async Task UpdateProductQuantity(int id, int newQuantity)
+		{
+			var product = await _appDbContext.Products.FirstOrDefaultAsync(x => x.Id == id);
+			if (product == null)
+			{
+				throw new Exception("Product bulunamadı");
+			}
+
+			product.Quantity = newQuantity;
+			_appDbContext.Products.Update(product);
+			await _appDbContext.SaveChangesAsync();
+		}
+	}
 }

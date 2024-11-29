@@ -140,6 +140,7 @@ builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Str
 builder.Services.AddScoped<IProductService, ProductManager>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
+
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 
 

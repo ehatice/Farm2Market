@@ -8,13 +8,14 @@ using System.Threading.Tasks;
 using Farm2Market.Domain.Interfaces;
 using Farm2Marrket.Application.Sevices;
 using Farm2Marrket.Application.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace Farm2Marrket.Application.Manager
 {
     public class ProductManager : IProductService
     {
         private readonly IProductRepository _productRepository;
-        public ProductManager(IProductRepository productRepository )
+        public ProductManager(IProductRepository productRepository)
         {
             _productRepository = productRepository;
         }
@@ -96,6 +97,7 @@ namespace Farm2Marrket.Application.Manager
                 FullAddress = product.FullAddress,
                 Category = product.Category,
                 Quality = product.Quality,
+                Quantity = product.Quantity,
                 Price = product.Price,
                 Image = product.Image != null ? Convert.ToBase64String(product.Image) : string.Empty, // byte[] -> Base64
                 UnitType = product.UnitType,
@@ -106,6 +108,36 @@ namespace Farm2Marrket.Application.Manager
             return productDtos;
         }
 
-    }
+		public async Task<bool> UpdateProductQuantity(int id, int amount)
+		{
+			var product = await _productRepository.GetByIdAsync(id);
+			if (product == null)
+			{
+				throw new Exception("Product bulunamadı");
+			}
+
+			// Geçerli miktar kontrolü
+			if (amount <= 0)
+			{
+				throw new Exception("Girdiğiniz miktar 0 veya negatif olamaz");
+			}
+
+			if (product.Quantity < amount)
+			{
+				throw new Exception("Girdiğiniz miktar ürünün mevcut adedinden fazla olamaz");
+			}
+
+			// Yeni miktarı hesapla
+			int newQuantity = product.Quantity - amount;
+
+			// Repository metodunu çağır
+			await _productRepository.UpdateProductQuantity(product.Id, newQuantity);
+
+			return true;
+
+
+		}
+
+	}
 }
 

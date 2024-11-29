@@ -136,13 +136,13 @@ namespace Farm2Marrket.Application.Manager
 				throw new Exception("Girdiğiniz miktar 0 veya negatif olamaz");
 			}
 
-			if (product.Quantity < amount)
+			if (product.WeightOrAmount < amount)
 			{
 				throw new Exception("Girdiğiniz miktar ürünün mevcut adedinden fazla olamaz");
 			}
 
 			// Yeni miktarı hesapla
-			int newQuantity = product.Quantity - amount;
+			int newQuantity = product.WeightOrAmount - amount;
 
 			// Repository metodunu çağır
 			await _productRepository.UpdateProductQuantity(product.Id, newQuantity);

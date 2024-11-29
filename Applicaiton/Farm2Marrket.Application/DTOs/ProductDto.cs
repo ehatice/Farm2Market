@@ -11,7 +11,7 @@ namespace Farm2Marrket.Application.DTOs
         public  int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string WeightOrAmount { get; set; }
+        public int WeightOrAmount { get; set; }
         public string Address { get; set; }
         public string FullAddress { get; set; }
         public string Category { get; set; }

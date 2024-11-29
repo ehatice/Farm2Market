@@ -17,8 +17,8 @@ namespace Farm2Market.Infrastructure.Data
                 : base(options)
         {
         }
-        //public AppDbContext()
-        //{}
+        public AppDbContext()
+        {}
 
    
         public DbSet<User> Users { get; set; }
@@ -27,10 +27,10 @@ namespace Farm2Market.Infrastructure.Data
         public DbSet<Product> Products { get; set; }
        
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=root;database=farm2markett", new MySqlServerVersion(new Version(9, 0, 0)));
-        //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=08080808;database=farm2markett", new MySqlServerVersion(new Version(9, 0, 0)));
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

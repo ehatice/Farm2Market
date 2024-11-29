@@ -56,7 +56,7 @@ namespace Farm2Market.API.Controllers
             catch (Exception ex)
             {
                 // Hata durumunda 500 döndür
-        return StatusCode(500, ApiResponse<string>.Failure($"Urun eklenirken hata olustu: {ex.Message}"));
+            return StatusCode(500, ApiResponse<string>.Failure($"Urun eklenirken hata olustu: {ex.Message}"));
             }
         }
         [HttpDelete("{id}")]

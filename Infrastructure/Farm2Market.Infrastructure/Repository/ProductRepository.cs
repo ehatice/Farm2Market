@@ -52,7 +52,7 @@ namespace Farm2Market.Infrastructure.Repository
 				throw new Exception("Product bulunamadı");
 			}
 
-			product.Quantity = newQuantity;
+			product.WeightOrAmount = newQuantity;
 			_appDbContext.Products.Update(product);
 			await _appDbContext.SaveChangesAsync();
 		}

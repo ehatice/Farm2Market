@@ -15,6 +15,7 @@ namespace Farm2Marrket.Application.Sevices
         Task<bool> UpdateProductQuantity(int id, int amount);
 
 		Task<IEnumerable<ProductDto>> GetProductsByFarmerIdAsync(Guid farmerId);
+        Task<IEnumerable<ProductDto>> GetProductAsync();
 
     }
 }

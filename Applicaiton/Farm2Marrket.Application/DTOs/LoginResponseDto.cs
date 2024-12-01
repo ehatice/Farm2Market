@@ -13,5 +13,7 @@ namespace Farm2Marrket.Application.DTOs
         public bool EmailConfirmed { get; set; }
         public string Token { get; set; }
         public string Email { get; set; }
+        public int ConfirmationNumber { get; set; }
+
     }
 }

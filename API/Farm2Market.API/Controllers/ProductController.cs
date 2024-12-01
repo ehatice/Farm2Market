@@ -11,7 +11,7 @@ namespace Farm2Market.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class ProductController: ControllerBase
+    public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
         public ProductController(IProductService productService)
@@ -40,7 +40,7 @@ namespace Farm2Market.API.Controllers
                 if (Guid.TryParse(userId, out userGuid))
                 {
 
-                   var addedProduct =  await _productService.AddProduct(userGuid, productDto);
+                    var addedProduct = await _productService.AddProduct(userGuid, productDto);
                     return Ok(ApiResponse<ProductResponseDto>.Success(addedProduct));
 
 
@@ -56,9 +56,12 @@ namespace Farm2Market.API.Controllers
             catch (Exception ex)
             {
                 // Hata durumunda 500 döndür
-            return StatusCode(500, ApiResponse<string>.Failure($"Urun eklenirken hata olustu: {ex.Message}"));
+                return StatusCode(500, ApiResponse<string>.Failure($"Urun eklenirken hata olustu: {ex.Message}"));
             }
         }
+
+
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> SoftDeleteProduct(int id)
         {
@@ -91,28 +94,41 @@ namespace Farm2Market.API.Controllers
         }
 
 
-		[HttpPost("UpdateProductQuantity")]
-		public async Task<IActionResult> UpdateProductQuantity(int id, int amount)
-		{
-			try
-			{
-				bool result = await _productService.UpdateProductQuantity(id, amount);
-				if (result)
-				{
-					return Ok("Ürün miktarı başarıyla güncellendi.");
-				}
-				else
-				{
-					return BadRequest("Ürün miktarı güncellenemedi.");
-				}
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
-		}
+        [HttpPost("UpdateProductQuantity")]
+        public async Task<IActionResult> UpdateProductQuantity(int id, int amount)
+        {
+            try
+            {
+                bool result = await _productService.UpdateProductQuantity(id, amount);
+                if (result)
+                {
+                    return Ok("Ürün miktarı başarıyla güncellendi.");
+                }
+                else
+                {
+                    return BadRequest("Ürün miktarı güncellenemedi.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
 
+        [HttpGet]
+        public async Task<IActionResult> GetProducts()
+        {
+            try
+            { 
+                var products = await _productService.GetProductAsync();
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
 
-	}
+    }
 }

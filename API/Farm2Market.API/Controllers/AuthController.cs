@@ -5,6 +5,8 @@ using Farm2Marrket.Application.Sevices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Farm2Market.API.Controllers
 {
@@ -35,24 +37,28 @@ namespace Farm2Market.API.Controllers
             return Ok("Pong");
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost("SendMail")]
-		public async Task<IActionResult> SendMail([FromBody] EmailRequest emailRequest)
+		public async Task<IActionResult> SendMail()
 		{
-			await _emailService.SendEmailAsync(emailRequest.ToEmail, emailRequest.Subject, emailRequest.Body);
-			return Ok("Email sent successfully!");
+            Random random = new Random();
+            int number = random.Next(1000, 10000);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userExists = await _userManager.FindByIdAsync(userId);
+
+            //await _emailService.SendEmailAsync(emailRequest.ToEmail, emailRequest.Subject, emailRequest.Body);
+            await _emailService.SendEmailAsync(userExists.Email, "emailverificationcode", number.ToString());
+            return Ok("Email sent successfully!");
 		}
-
-
 		[HttpGet]
-        public async Task<IActionResult> ConfirmMail(string Id,int number)
+        public async Task<IActionResult> ConfirmMail(string id,int number)
         {
-			var bisey = await _userService.ConfirmNumber(Id, number);
+			var bisey = await _userService.ConfirmNumber(id, number);
             if (bisey)
             {
 				return Ok();
 			}
             else { return BadRequest(false); }
-            
 		}
 
         [HttpPost]
@@ -62,13 +68,11 @@ namespace Farm2Market.API.Controllers
                 return BadRequest(ModelState);
 
             // Kullanýcý var mý kontrol et
-            var userExists = await _userManager.FindByNameAsync(model.UserName);
+            var userExists = await _userManager.FindByNameAsync(model.Email);
             if (userExists != null)
                 return Conflict(ApiResponse<string>.Failure("Bu kullanýcý adý zaten mevcut."));
 
-            Random random = new Random();
-			int number = random.Next(1000, 10000);
-
+           
 			// Yeni kullanýcý oluþtur
 			var user = new Farmer
             {
@@ -78,10 +82,10 @@ namespace Farm2Market.API.Controllers
                Email = model.Email,
                Adress=model.Adress,
                UserRole = RoleConsts.Farmer, 
-               ConfirmationNumber = number,
+              
             };
 
-			await _emailService.SendEmailAsync(model.Email, "emailverificationcode", number.ToString());
+			//await _emailService.SendEmailAsync(model.Email, "emailverificationcode", number.ToString());
 			//var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 			//var confirmationlink = Url.Action("ConfirmMail", "Auth", new { token , email = user.Email, userId = user.Id });
 			
@@ -112,11 +116,6 @@ namespace Farm2Market.API.Controllers
             if (userExists != null)
                 return Conflict(ApiResponse<string>.Failure("Bu kullanýcý adý zaten mevcut."));
 
-            // Yeni kullanýcý oluþtur
-
-            Random random = new Random();
-			int number = random.Next(1000, 10000);
-
 			var user = new MarketReceiver
             {
                 FirstName = model.FirstName,
@@ -127,16 +126,9 @@ namespace Farm2Market.API.Controllers
                 CompanyType = model.CompanyType,
                 MarketName = model.MarketName,
                 UserRole = RoleConsts.MarketReceiver,
-                ConfirmationNumber = number,
-                
             };
-
-
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationlink = Url.Action("ConfirmMail", "Auth", new {token , email = user.Email});
-
-
-
+            //var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            //var confirmationlink = Url.Action("ConfirmMail", "Auth", new {token , email = user.Email});
 
             // Kullanýcýyý kaydet
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -152,10 +144,9 @@ namespace Farm2Market.API.Controllers
                 MarketName = user.MarketName,
                 CompanyType= user.CompanyType,
             };
-            return Ok(ApiResponse<Object>.Success(responseDto));
+            return Ok(ApiResponse<MarketReceiverResponseDto>.Success(responseDto));
 
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginDto model)
@@ -164,7 +155,7 @@ namespace Farm2Market.API.Controllers
                 return BadRequest(ApiResponse<string>.Failure("Geçersiz model."));
 
 
-            var user = await _userManager.FindByNameAsync(model.UserName);
+            var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
                 return Unauthorized(ApiResponse<string>.Failure("Geçersiz kullanýcý adý veya þifre."));
 
@@ -174,7 +165,21 @@ namespace Farm2Market.API.Controllers
             if (!result.Succeeded)
                 return Unauthorized(ApiResponse<string>.Failure("Geçersiz kullanýcý adý veya þifre."));
 
+
+            if (!user.EmailConfirmed)
+            {
+                Random random = new Random();
+                int number = random.Next(1000, 10000);
+                user.ConfirmationNumber = number;
+
+                // Email gönderme iþlemi
+                await _emailService.SendEmailAsync(model.Email, "emailverificationcode", number.ToString());
+            }
+            var tokenn = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationlink = Url.Action("ConfirmMail", "Auth", new { tokenn , email = user.Email, userId = user.Id });
+
             var token = await _appUserService.GenerateToken(user);
+            var updateResult = await _userManager.UpdateAsync(user);
 
             var LoginResponse = new LoginResponseDto
             {
@@ -182,17 +187,12 @@ namespace Farm2Market.API.Controllers
                 EmailConfirmed = user.EmailConfirmed,
                 UserRole = user.UserRole,
                 Token = token,
-                Email=user.Email
+                Email=user.Email,
+                ConfirmationNumber = user.ConfirmationNumber,
             };
             return Ok(ApiResponse<LoginResponseDto>.Success(LoginResponse));
         }
     }
-}
-public class EmailRequest
-{
-	public string ToEmail { get; set; }
-	public string Subject { get; set; }
-	public string Body { get; set; }
 }
 
 

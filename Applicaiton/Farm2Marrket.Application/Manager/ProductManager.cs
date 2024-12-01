@@ -9,6 +9,7 @@ using Farm2Market.Domain.Interfaces;
 using Farm2Marrket.Application.Sevices;
 using Farm2Marrket.Application.DTOs;
 using Microsoft.EntityFrameworkCore;
+using Farm2Market.Domain.Enums;
 
 namespace Farm2Marrket.Application.Manager
 {
@@ -20,9 +21,7 @@ namespace Farm2Marrket.Application.Manager
             _productRepository = productRepository;
         }
         public async Task<ProductResponseDto> AddProduct(Guid farmerId, ProductDto productDto)
-
         {
-
             byte[]? imageBytes = null;
             if (!string.IsNullOrEmpty(productDto.Image))
             {
@@ -36,63 +35,68 @@ namespace Farm2Marrket.Application.Manager
                 }
             }
 
-            
-            var product = new Product
+            // Category'yi enum türüne dönüştür
+            ProductCategory categoryEnum;
+            if (Enum.TryParse(productDto.Category, out categoryEnum))
             {
-                Name = productDto.Name,
-                Description = productDto.Description,
-                WeightOrAmount = productDto.WeightOrAmount,
-                Address = productDto.Address,
-                FullAddress = productDto.FullAddress,
-                Category = productDto.Category,
-                Quality = productDto.Quality,
-                Price = productDto.Price,
-                FarmerId=farmerId,
-                Image = imageBytes ?? new byte[0],
-                UnitType = productDto.UnitType,
-                CreatedDate = DateTime.Now,
-          
-            };
+                var product = new Product
+                {
+                    Name = productDto.Name,
+                    Description = productDto.Description,
+                    WeightOrAmount = productDto.WeightOrAmount,
+                    Address = productDto.Address,
+                    FullAddress = productDto.FullAddress,
+                    Category = categoryEnum,  // Enum olarak kaydediliyor
+                    Quality = productDto.Quality,
+                    Price = productDto.Price,
+                    FarmerId = farmerId,
+                    Image = imageBytes ?? new byte[0],
+                    UnitType = productDto.UnitType,
+                    CreatedDate = DateTime.Now,
+                };
 
-            
-            try
-            {
-                await _productRepository.AddAsync(product);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("An error occurred while adding the product: " + ex.Message);
-                throw;
-            }
-            var productResponse = new ProductResponseDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                WeightOrAmount= product.WeightOrAmount,
-                Address = product.Address,
-                Category= product.Category,
-                Quality = product.Quality,
-                Price = product.Price,
-                IsActive= product.IsActive,
+                try
+                {
+                    await _productRepository.AddAsync(product);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("An error occurred while adding the product: " + ex.Message);
+                    throw;
+                }
 
-            };
-            return productResponse;
+                var productResponse = new ProductResponseDto
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    WeightOrAmount = product.WeightOrAmount,
+                    Address = product.Address,
+                    Category = product.Category.ToString(),  // Enum'u string'e dönüştür
+                    Quality = product.Quality,
+                    Price = product.Price,
+                    IsActive = product.IsActive,
+                };
+
+                return productResponse;  // Burada return ekliyoruz
+            }
+            else
+            {
+                throw new ArgumentException("Invalid category value");
+            }
         }
+
 
         public async Task DeleteProductAsync(int id)
         {
-            
             var product = await _productRepository.GetByIdAsync(id);
             if (product == null)
             {
                 throw new Exception("Ürün bulunamadı.");
             }
-
             if (product.IsActive)
             {
                 throw new Exception("Ürün zaten pasif durumda.");
             }
-
             await _productRepository.DeleteProductAsync(product);  // DeleteProductAsync'i repository'de çağırıyoruz.
         }
 
@@ -100,8 +104,8 @@ namespace Farm2Marrket.Application.Manager
         {
             //repodan alıyoruz
             var products = await _productRepository.GetProductsByFarmerIdAsync(farmerId);
+            
 
-         
             var productDtos = products.Select(product => new ProductDto
             {
                 Name = product.Name,
@@ -109,7 +113,7 @@ namespace Farm2Marrket.Application.Manager
                 WeightOrAmount = product.WeightOrAmount,
                 Address = product.Address,
                 FullAddress = product.FullAddress,
-                Category = product.Category,
+                Category = product.Category.ToString(),
                 Quality = product.Quality,
                 Quantity = product.Quantity,
                 Price = product.Price,
@@ -122,36 +126,66 @@ namespace Farm2Marrket.Application.Manager
             return productDtos;
         }
 
-		public async Task<bool> UpdateProductQuantity(int id, int amount)
-		{
-			var product = await _productRepository.GetByIdAsync(id);
-			if (product == null)
-			{
-				throw new Exception("Product bulunamadı");
-			}
+        public async Task<IEnumerable<ProductDto>> GetProductAsync()
+        {
+            //repodan alıyoruz
+            var products = await _productRepository.GetProductsAsync();
 
-			// Geçerli miktar kontrolü
-			if (amount <= 0)
-			{
-				throw new Exception("Girdiğiniz miktar 0 veya negatif olamaz");
-			}
+            var productDtos = products.Select(product => new ProductDto
+            {
+                Name = product.Name,
+                Description = product.Description,
+                WeightOrAmount = product.WeightOrAmount,
+                Address = product.Address,
+                FullAddress = product.FullAddress,
+                Category = product.Category.ToString(),
+                Quality = product.Quality,
+                Quantity = product.Quantity,
+                Price = product.Price,
+                Image = product.Image != null ? Convert.ToBase64String(product.Image) : string.Empty, // byte[] -> Base64
+                UnitType = product.UnitType,
+                //FarmerId = product.FarmerId,
+                //IsActive = product.IsActive
+            });
 
-			if (product.WeightOrAmount < amount)
-			{
-				throw new Exception("Girdiğiniz miktar ürünün mevcut adedinden fazla olamaz");
-			}
+            return productDtos;
+        }
+        public async Task<bool> UpdateProductQuantity(int id, int amount)
+        {
+            // Ürünü ID ile al
+            var product = await _productRepository.GetByIdAsync(id);
+            if (product == null)
+            {
+                throw new Exception("Product bulunamadı");
+            }
 
-			// Yeni miktarı hesapla
-			int newQuantity = product.WeightOrAmount - amount;
+            // Geçerli miktar kontrolü
+            if (amount <= 0)
+            {
+                throw new Exception("Girdiğiniz miktar 0 veya negatif olamaz");
+            }
 
-			// Repository metodunu çağır
-			await _productRepository.UpdateProductQuantity(product.Id, newQuantity);
+            if (product.WeightOrAmount < amount)
+            {
+                throw new Exception("Girdiğiniz miktar ürünün mevcut adedinden fazla olamaz");
+            }
 
-			return true;
+            // Yeni miktarı hesapla
+            int newQuantity = product.WeightOrAmount - amount;
 
+            // Eğer yeni miktar 0 olursa ürünü sil
+            if (newQuantity == 0)
+            {
+                await _productRepository.DeleteProductAsync(product);
+            }
+          
+                
+                await _productRepository.UpdateProductQuantity(product.Id, newQuantity);
+            
 
-		}
+            return true;
+        }
 
-	}
+    }
 }
 

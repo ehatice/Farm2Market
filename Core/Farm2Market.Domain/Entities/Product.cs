@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Farm2Market.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace Farm2Market.Domain.Entities
         public int WeightOrAmount { get; set; }
         public string Address { get; set; }
         public string FullAddress { get; set; }
-        public string Category { get; set; }
+        public ProductCategory Category { get; set; }
         public string Quality { get; set; }
         public int Quantity { get; set; }
         public decimal Price { get; set; }

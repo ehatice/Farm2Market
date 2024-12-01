@@ -26,12 +26,11 @@ namespace Farm2Market.Infrastructure.Repository
         }
         public async Task DeleteProductAsync(Product product)
         {
-            product.IsActive = true;  // Soft delete: ürünü pasif yap
+            product.IsActive = true; 
             product.DeletedDate = DateTime.Now;
 
             await _appDbContext.SaveChangesAsync();
         }
-
         public async Task<Product> GetByIdAsync(int id)
         {
             return await _appDbContext.Products.FindAsync(id);
@@ -40,11 +39,19 @@ namespace Farm2Market.Infrastructure.Repository
         public async Task<IEnumerable<Product>> GetProductsByFarmerIdAsync(Guid farmerId)
         {
             return await _appDbContext.Products
-                .Where(p => p.FarmerId == farmerId && p.IsActive)
+                .Where(p => p.FarmerId == farmerId && !p.IsActive)
+                .ToListAsync();
+        }
+        public async Task<IEnumerable<Product>> GetProductsAsync()
+        {
+            return await _appDbContext.Products
+                .Where(p => !p.IsActive)
                 .ToListAsync();
         }
 
-		public async Task UpdateProductQuantity(int id, int newQuantity)
+
+
+        public async Task UpdateProductQuantity(int id, int newQuantity)
 		{
 			var product = await _appDbContext.Products.FirstOrDefaultAsync(x => x.Id == id);
 			if (product == null)

@@ -32,17 +32,16 @@ namespace Farm2Market.Infrastructure.Repository
 
 			if (farmer == null)
 			{
-				// Farmer bulunamadıysa burada bir işlem yapabilirsiniz
+				//Farmer bulunamadıysa burada bir işlem yapabilirsiniz
 				Console.WriteLine("Farmer not found.");
 				return 1;
 			}
 			else
 			{
-				// Farmer bulunduğunda burada işlem yapabilirsiniz
+				//Farmer bulunduğunda burada işlem yapabilirsiniz
 				Console.WriteLine($"Farmer ID: {farmer.Id}");
 				return farmer.ConfirmationNumber;
 			}
-			
 		}
 		public async Task<bool> GetConfirmedEmail(string id)
 		{
@@ -56,8 +55,6 @@ namespace Farm2Market.Infrastructure.Repository
 				return true;
 			}
 			else { return false; }
-
-			
 		}
 	}
 }

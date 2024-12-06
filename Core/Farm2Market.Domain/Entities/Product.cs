@@ -27,6 +27,8 @@ namespace Farm2Market.Domain.Entities
         public DateTime? DeletedDate { get; set; }
         public Farmer  Farmer { get; set; }
         public Guid FarmerId { get; set; }
-
+        public ICollection<CartItem> CartItems { get; set; }
     }
 }
+
+

@@ -50,6 +50,7 @@ namespace Farm2Market.API.Controllers
             await _emailService.SendEmailAsync(userExists.Email, "emailverificationcode", number.ToString());
             return Ok("Email sent successfully!");
 		}
+
 		[HttpGet]
         public async Task<IActionResult> ConfirmMail(string id,int number)
         {

@@ -42,16 +42,12 @@ namespace Farm2Market.API.Controllers
 
                     var addedProduct = await _productService.AddProduct(userGuid, productDto);
                     return Ok(ApiResponse<ProductResponseDto>.Success(addedProduct));
-
-
                 }
                 else
                 {
                     // Eğer çevrilemezse, uygun bir hata veya işlem yapabilirsiniz
                     return BadRequest(ApiResponse<string>.Failure("Geçersiz userId formatı. Lütfen doğru bir GUID girin."));
                 }
-
-
             }
             catch (Exception ex)
             {

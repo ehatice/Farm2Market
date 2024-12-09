@@ -26,6 +26,8 @@ namespace Farm2Market.Infrastructure.Data
 
 		public DbSet<Category> Categories { get; set; }
 
+        public DbSet<CartItem> CartItems { get; set; }
+
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -43,7 +45,9 @@ namespace Farm2Market.Infrastructure.Data
             modelBuilder.Entity<Farmer>().ToTable("Farmers");
             modelBuilder.Entity<MarketReceiver>().ToTable("MarketReceivers");
             modelBuilder.Entity<Product>().ToTable("Products");
-      
+            modelBuilder.Entity<CartItem>().ToTable("CartItems");
+            modelBuilder.Entity<Cart>().ToTable("Carts");
+
 
 
             base.OnModelCreating(modelBuilder);

@@ -11,6 +11,5 @@ namespace Farm2Market.Domain.Entities
         public string Adress { get; set; }
 
         public ICollection<Product> Products { get; set; }
-        
     }
 }

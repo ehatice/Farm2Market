@@ -26,7 +26,7 @@ namespace Farm2Market.Infrastructure.Data
 
 		public DbSet<Category> Categories { get; set; }
 
-        public DbSet<CartItem> CartItems { get; set; }
+        //public DbSet<CartItem> CartItems { get; set; }
 
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

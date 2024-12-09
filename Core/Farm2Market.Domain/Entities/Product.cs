@@ -31,9 +31,6 @@ namespace Farm2Market.Domain.Entities
 		public int CategoryId { get; set; } // Foreign Key
 		public Category Category { get; set; }
 
-	}
-        public ICollection<CartItem> CartItems { get; set; }
-    }
+		//public ICollection<CartItem> CartItems { get; set; }
+	}   
 }
-
-

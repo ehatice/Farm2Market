@@ -112,6 +112,7 @@ namespace Farm2Marrket.Application.Manager
 
             var productDtos = products.Select(product => new ProductDto
             {
+                Id = product.Id,
                 Name = product.Name,
                 Description = product.Description,
                 WeightOrAmount = product.WeightOrAmount,
@@ -139,7 +140,8 @@ namespace Farm2Marrket.Application.Manager
 
             var productDtos = products.Select(product => new ProductDto
             {
-                Name = product.Name,
+				Id = product.Id,
+				Name = product.Name,
                 Description = product.Description,
                 WeightOrAmount = product.WeightOrAmount,
                 Address = product.Address,

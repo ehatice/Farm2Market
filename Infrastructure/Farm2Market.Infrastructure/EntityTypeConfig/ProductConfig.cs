@@ -19,9 +19,9 @@ namespace Farm2Market.Infrastructure.EntityTypeConfig
             .HasForeignKey(a => a.FarmerId);
 
 
-            builder.HasMany(p => p.CartItems)
-                .WithOne(p => p.Product)
-                .HasForeignKey(p => p.ProductId);
+            //builder.HasMany(p => p.CartItems)
+            //    .WithOne(p => p.Product)
+            //    .HasForeignKey(p => p.ProductId);
 
         }
     }

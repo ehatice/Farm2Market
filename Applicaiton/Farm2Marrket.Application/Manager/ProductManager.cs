@@ -22,35 +22,43 @@ namespace Farm2Marrket.Application.Manager
         }
         public async Task<ProductResponseDto> AddProduct(Guid farmerId, ProductDto productDto)
         {
-            byte[]? imageBytes = null;
-            if (!string.IsNullOrEmpty(productDto.Image))
-            {
-                try
-                {
-                    imageBytes = Convert.FromBase64String(productDto.Image);
-                }
-                catch (FormatException ex)
-                {
-                    Console.WriteLine("Invalid base64 string: " + ex.Message);
-                }
-            }
+			List<byte[]> imageBytesList = new List<byte[]>();
 
-            // Category'yi enum türüne dönüştür
-            ProductCategory categoryEnum;
-            if (Enum.TryParse(productDto.Category, out categoryEnum))
-            {
-                var product = new Product
+			if (productDto.Image != null && productDto.Image.Any())
+			{
+				foreach (var base64Image in productDto.Image)
+				{
+					if (!string.IsNullOrEmpty(base64Image))
+					{
+						try
+						{
+							var imageBytes = Convert.FromBase64String(base64Image);
+							imageBytesList.Add(imageBytes);
+						}
+						catch (FormatException ex)
+						{
+							Console.WriteLine("Invalid base64 string: " + ex.Message);
+						}
+					}
+				}
+			}
+
+			// Category'yi enum türüne dönüştür
+			//ProductCategory categoryEnum;
+			var category = await _productRepository.Categories.FirstOrDefaultAsync(c => c.Id == productDto.CategoryId);
+
+			var product = new Product
                 {
                     Name = productDto.Name,
                     Description = productDto.Description,
                     WeightOrAmount = productDto.WeightOrAmount,
                     Address = productDto.Address,
                     FullAddress = productDto.FullAddress,
-                    Category = categoryEnum,  // Enum olarak kaydediliyor
+                    Category = category,  // Enum olarak kaydediliyor
                     Quality = productDto.Quality,
                     Price = productDto.Price,
                     FarmerId = farmerId,
-                    Image = imageBytes ?? new byte[0],
+                    Image = imageBytesList,
                     UnitType = productDto.UnitType,
                     CreatedDate = DateTime.Now,
                 };
@@ -71,18 +79,14 @@ namespace Farm2Marrket.Application.Manager
                     Name = product.Name,
                     WeightOrAmount = product.WeightOrAmount,
                     Address = product.Address,
-                    Category = product.Category.ToString(),  // Enum'u string'e dönüştür
+                    Category = category.Name,  // Enum'u string'e dönüştür
                     Quality = product.Quality,
                     Price = product.Price,
                     IsActive = product.IsActive,
                 };
 
                 return productResponse;  // Burada return ekliyoruz
-            }
-            else
-            {
-                throw new ArgumentException("Invalid category value");
-            }
+
         }
 
 
@@ -104,7 +108,7 @@ namespace Farm2Marrket.Application.Manager
         {
             //repodan alıyoruz
             var products = await _productRepository.GetProductsByFarmerIdAsync(farmerId);
-            
+
 
             var productDtos = products.Select(product => new ProductDto
             {
@@ -113,12 +117,14 @@ namespace Farm2Marrket.Application.Manager
                 WeightOrAmount = product.WeightOrAmount,
                 Address = product.Address,
                 FullAddress = product.FullAddress,
-                Category = product.Category.ToString(),
+                CategoryId = product.CategoryId,
                 Quality = product.Quality,
                 Quantity = product.Quantity,
                 Price = product.Price,
-                Image = product.Image != null ? Convert.ToBase64String(product.Image) : string.Empty, // byte[] -> Base64
-                UnitType = product.UnitType,
+				Image = product.Image != null && product.Image.Any()
+		? product.Image.Select(image => Convert.ToBase64String(image)).ToList() // byte[] -> Base64 for each image
+		: new List<string>(), // byte[] -> Base64
+				UnitType = product.UnitType,
                 //FarmerId = product.FarmerId,
                 //IsActive = product.IsActive
             }); 
@@ -138,12 +144,14 @@ namespace Farm2Marrket.Application.Manager
                 WeightOrAmount = product.WeightOrAmount,
                 Address = product.Address,
                 FullAddress = product.FullAddress,
-                Category = product.Category.ToString(),
+                CategoryId = product.CategoryId,
                 Quality = product.Quality,
                 Quantity = product.Quantity,
                 Price = product.Price,
-                Image = product.Image != null ? Convert.ToBase64String(product.Image) : string.Empty, // byte[] -> Base64
-                UnitType = product.UnitType,
+				Image = product.Image != null && product.Image.Any()
+		? product.Image.Select(image => Convert.ToBase64String(image)).ToList() // Her bir byte[] -> Base64
+		: new List<string>(), // byte[] -> Base64
+				UnitType = product.UnitType,
                 //FarmerId = product.FarmerId,
                 //IsActive = product.IsActive
             });
@@ -186,6 +194,95 @@ namespace Farm2Marrket.Application.Manager
             return true;
         }
 
-    }
+		public async Task<bool> UpdateProductAsync(ProductDto productDto)
+		{
+			var product = await _productRepository.GetByIdAsync(productDto.Id);
+			if (product == null)
+			{
+				return false;
+			}
+
+			// DTO'dan alınan verilerle mevcut ürün güncelleniyor
+			product.Name = productDto.Name;
+			product.Description = productDto.Description;
+			product.WeightOrAmount = productDto.WeightOrAmount;
+			product.Address = productDto.Address;
+			product.FullAddress = productDto.FullAddress;
+			product.CategoryId = productDto.CategoryId;
+			// Enum dönüşümü
+			//if (Enum.TryParse<ProductCategory>(productDto.Category, out var category))
+			//{
+			//	product.Category = category;
+			//}
+			//else
+			//{
+			//	throw new Exception("Invalid category value.");
+			//}
+
+			product.Quality = productDto.Quality;
+			product.Quantity = productDto.Quantity;
+			product.Price = productDto.Price;
+			if (productDto.Image != null && productDto.Image.Any())
+			{
+				product.Image = productDto.Image
+					.Where(image => !string.IsNullOrEmpty(image)) // Geçerli resim değerlerini al
+					.Select(image => Convert.FromBase64String(image)) // Base64 -> byte[]
+					.ToList();
+			} // Resim değişmemişse mevcut resmi korur
+			product.UnitType = productDto.UnitType;
+			product.IsActive = productDto.IsActive;
+
+			// Veritabanında güncelleme işlemi
+			await _productRepository.UpdateAsync(product);
+			return true;
+		}
+
+
+		//public async Task<bool> UpdateAsync(Product product)
+		//{
+		//	// Veritabanında güncelleme işlemi
+		//	var existingProduct = await _productRepository.GetByIdAsync(product.Id);
+		//	if (existingProduct == null)
+		//	{
+		//		return false; // Ürün bulunamadı
+		//	}
+
+		//	existingProduct.Name = product.Name;
+		//	existingProduct.Description = product.Description;
+		//	existingProduct.WeightOrAmount = product.WeightOrAmount;
+		//	existingProduct.Address = product.Address;
+		//	existingProduct.FullAddress = product.FullAddress;
+		//	existingProduct.Category = product.Category;
+		//	existingProduct.Quality = product.Quality;
+		//	existingProduct.Quantity = product.Quantity;
+		//	existingProduct.Price = product.Price;
+		//	existingProduct.Image = product.Image;
+		//	existingProduct.UnitType = product.UnitType;
+		//	existingProduct.IsActive = product.IsActive;
+
+		//	await _productRepository.UpdateAsync(existingProduct);
+		//	return true;
+		//}
+
+
+
+		public async Task<int> AddCategoryAsync(string categoryName)
+		{
+			if (string.IsNullOrEmpty(categoryName))
+				throw new ArgumentException("Category name cannot be null or empty.");
+
+			// Yeni kategori nesnesi oluştur
+			var category = new Category
+			{
+				Name = categoryName
+			};
+
+			// Veritabanına ekle
+			await _productRepository.AddCategoryAsync(category);
+
+			return category.Id; // Eklenen kategorinin ID'sini döndür
+		}
+
+	}
 }
 

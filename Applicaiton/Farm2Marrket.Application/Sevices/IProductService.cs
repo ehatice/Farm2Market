@@ -16,6 +16,9 @@ namespace Farm2Marrket.Application.Sevices
 
 		Task<IEnumerable<ProductDto>> GetProductsByFarmerIdAsync(Guid farmerId);
         Task<IEnumerable<ProductDto>> GetProductAsync();
+		Task<bool> UpdateProductAsync(ProductDto productDto);
 
-    }
+		Task<int> AddCategoryAsync(string categoryName);
+		//Task<bool> UpdateAsync(Product product);
+	}
 }

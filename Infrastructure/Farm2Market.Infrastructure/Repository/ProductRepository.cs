@@ -63,5 +63,28 @@ namespace Farm2Market.Infrastructure.Repository
 			_appDbContext.Products.Update(product);
 			await _appDbContext.SaveChangesAsync();
 		}
+
+
+		public async Task UpdateAsync(Product product)
+		{
+			_appDbContext.Products.Update(product);
+			await _appDbContext.SaveChangesAsync();
+		}
+		public IQueryable<Product> Products => _appDbContext.Products;
+		public IQueryable<Category> Categories => _appDbContext.Categories; // Kategoriler için ekleme
+
+
+
+		public async Task<Category> GetCategoryByIdAsync(int id)
+		{
+			return await _appDbContext.Categories.FindAsync(id);
+		}
+
+
+		public async Task AddCategoryAsync(Category category)
+		{
+			await _appDbContext.Categories.AddAsync(category);
+			await _appDbContext.SaveChangesAsync();
+		}
 	}
 }

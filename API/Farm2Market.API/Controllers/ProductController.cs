@@ -116,7 +116,31 @@ namespace Farm2Market.API.Controllers
         }
 
 
-        [HttpGet]
+		[HttpPut("UpdateProduct")]
+		public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto productDto)
+		{
+			if (id != productDto.Id)
+			{
+				return BadRequest("Product ID mismatch.");
+			}
+
+			var result = await _productService.UpdateProductAsync(productDto);
+			if (!result)
+			{
+				return StatusCode(500, "An error occurred while updating the product.");
+			}
+
+			return Ok("Product updated successfully.");
+		}
+
+
+
+
+
+
+
+
+		[HttpGet]
         public async Task<IActionResult> GetProducts()
         {
             try
@@ -130,5 +154,27 @@ namespace Farm2Market.API.Controllers
             }
         }
 
-    }
+
+
+
+		[HttpPost("AddCategory")]
+		public async Task<IActionResult> AddCategory([FromBody] CategoryDto categoryDto)
+		{
+			if (categoryDto == null || string.IsNullOrEmpty(categoryDto.Name))
+			{
+				return BadRequest("Category name cannot be null or empty.");
+			}
+
+			try
+			{
+				var categoryId = await _productService.AddCategoryAsync(categoryDto.Name);
+				return Ok(new { Message = "Category added successfully", CategoryId = categoryId });
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { Message = "An error occurred while adding the category.", Details = ex.Message });
+			}
+		}
+
+	}
 }

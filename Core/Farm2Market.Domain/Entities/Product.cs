@@ -15,11 +15,11 @@ namespace Farm2Market.Domain.Entities
         public int WeightOrAmount { get; set; }
         public string Address { get; set; }
         public string FullAddress { get; set; }
-        public ProductCategory Category { get; set; }
+        //public ProductCategory Category { get; set; }
         public string Quality { get; set; }
         public int Quantity { get; set; }
         public decimal Price { get; set; }
-        public byte[] Image { get; set; } 
+        public List<byte[]> Image { get; set; } 
         public string UnitType { get; set; }
         public bool IsActive { get; set; } = false;
         public DateTime? CreatedDate { get; set; }
@@ -28,5 +28,8 @@ namespace Farm2Market.Domain.Entities
         public Farmer  Farmer { get; set; }
         public Guid FarmerId { get; set; }
 
-    }
+		public int CategoryId { get; set; } // Foreign Key
+		public Category Category { get; set; }
+
+	}
 }

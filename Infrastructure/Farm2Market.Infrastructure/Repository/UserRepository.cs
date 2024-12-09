@@ -26,7 +26,14 @@ namespace Farm2Market.Infrastructure.Repository
             _appDbContext.SaveChanges();
         }
 
-        public async Task<int> GetConfirmNumber(string id)
+
+		public async Task UpdateAsync(Product product)
+		{
+			_appDbContext.Entry(product).State = EntityState.Modified;
+			await _appDbContext.SaveChangesAsync();
+		}
+
+		public async Task<int> GetConfirmNumber(string id)
         {
 			var farmer = await _farmers.FirstOrDefaultAsync(x => x.Id == id);
 

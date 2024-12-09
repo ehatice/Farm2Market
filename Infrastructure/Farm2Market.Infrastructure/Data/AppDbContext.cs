@@ -17,18 +17,22 @@ namespace Farm2Market.Infrastructure.Data
                 : base(options)
         {
         }
-        //public AppDbContext()
-       // {}
+        public AppDbContext()
+        {}
         public DbSet<User> Users { get; set; }
         public DbSet<Farmer> Farmers { get; set; }
         public DbSet<MarketReceiver> MarketReceivers { get; set; }
         public DbSet<Product> Products { get; set; }
-       
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		public DbSet<Category> Categories { get; set; }
+
+
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=root;database=farm2markett", new MySqlServerVersion(new Version(9, 0, 0)));
+            optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=08080808;database=farm2markett", new MySqlServerVersion(new Version(9, 0, 0)));
         }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -52,6 +56,17 @@ namespace Farm2Market.Infrastructure.Data
                     Password = "admin",
                     Email = "admin",
                 });
-        }
+			modelBuilder.Entity<Product>()
+			.HasOne(p => p.Category)
+			.WithMany(c => c.Products)
+			.HasForeignKey(p => p.CategoryId)
+			.OnDelete(DeleteBehavior.Restrict);
+		}
+
+
+
+
+
+
     }
 }

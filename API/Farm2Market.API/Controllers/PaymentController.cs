@@ -1,5 +1,6 @@
 ﻿using Farm2Marrket.Application.DTOs;
 using Farm2Marrket.Application.Sevices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -67,6 +68,7 @@ namespace Farm2Market.API.Controllers
 
 			return Ok(session.Url);
 		}
+
 
 		[HttpPost("Purchase")]
 		public async Task<IActionResult> PurchaseProduct(int productId, int quantity)

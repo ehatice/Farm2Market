@@ -90,7 +90,7 @@ namespace Farm2Market.API.Controllers
         }
 
 
-        [HttpPost("UpdateProductQuantity")]
+        [HttpPost()]
         public async Task<IActionResult> UpdateProductQuantity(int id, int amount)
         {
             try
@@ -112,7 +112,7 @@ namespace Farm2Market.API.Controllers
         }
 
 
-		[HttpPut("UpdateProduct")]
+		[HttpPut()]
 		public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto productDto)
 		{
 			if (id != productDto.Id)
@@ -153,7 +153,7 @@ namespace Farm2Market.API.Controllers
 
 
 
-		[HttpPost("AddCategory")]
+		[HttpPost()]
 		public async Task<IActionResult> AddCategory([FromBody] CategoryDto categoryDto)
 		{
 			if (categoryDto == null || string.IsNullOrEmpty(categoryDto.Name))

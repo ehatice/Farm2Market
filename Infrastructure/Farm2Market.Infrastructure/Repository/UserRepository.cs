@@ -35,7 +35,7 @@ namespace Farm2Market.Infrastructure.Repository
 
 		public async Task<int> GetConfirmNumber(string id)
         {
-			var farmer = await _farmers.FirstOrDefaultAsync(x => x.Id == id);
+			var farmer = await _appDbContext.Set<AppUser>().FirstOrDefaultAsync(x => x.Id == id);
 
 			if (farmer == null)
 			{
@@ -50,14 +50,20 @@ namespace Farm2Market.Infrastructure.Repository
 				return farmer.ConfirmationNumber;
 			}
 		}
+
+
+		public async Task<AppUser> GetByIdAsync(string id)
+		{
+			return await _appDbContext.Set<AppUser>().FirstOrDefaultAsync(x => x.Id == id);
+		}
 		public async Task<bool> GetConfirmedEmail(string id)
 		{
-			var entity = await _farmers.FirstOrDefaultAsync(x => x.Id == id);
+			var entity = await _appDbContext.Set<AppUser>().FirstOrDefaultAsync(x => x.Id == id);
 			if (entity != null)
 			{
 				entity.EmailConfirmed = true;
 				
-				_farmers.Entry(entity).State = EntityState.Modified;
+				_appDbContext.Entry(entity).State = EntityState.Modified;
 				await _appDbContext.SaveChangesAsync();
 				return true;
 			}

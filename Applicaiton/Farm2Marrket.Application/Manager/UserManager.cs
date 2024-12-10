@@ -22,8 +22,9 @@ namespace Farm2Marrket.Application.Manager
 
         }
 		public async Task<bool> ConfirmNumber(string id,int number)
-        { 
-            var existnumber = await _userRepository.GetConfirmNumber(id);
+        {
+            var idnum = await _userRepository.GetByIdAsync(id);
+			var existnumber = await _userRepository.GetConfirmNumber(id);
             if (existnumber == number)
             {
                 await _userRepository.GetConfirmedEmail(id);

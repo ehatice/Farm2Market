@@ -7,6 +7,7 @@ namespace Farm2Market.Domain
         Task AddAsync(User user);
         Task<int> GetConfirmNumber(string id);
         Task<bool> GetConfirmedEmail(string id);
+		Task<AppUser> GetByIdAsync(string id);
 
 	}
 }

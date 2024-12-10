@@ -38,7 +38,7 @@ namespace Farm2Market.API.Controllers
         }
 
         [Authorize(AuthenticationSchemes = "Bearer")]
-        [HttpPost("SendMail")]
+        [HttpPost()]
 		public async Task<IActionResult> SendMail()
 		{
             Random random = new Random();
@@ -51,9 +51,14 @@ namespace Farm2Market.API.Controllers
             return Ok("Email sent successfully!");
 		}
 
-		[HttpGet]
-        public async Task<IActionResult> ConfirmMail(string id,int number)
+		[HttpPost]
+        public async Task<IActionResult> ConfirmMail([FromBody]string id,int number)
         {
+			var userId = HttpContext.Session.GetString("UserId");
+			if (string.IsNullOrEmpty(userId))
+			{
+				return Unauthorized("User is not logged in.");
+			}
 			var bisey = await _userService.ConfirmNumber(id, number);
             if (bisey)
             {
@@ -165,9 +170,9 @@ namespace Farm2Market.API.Controllers
 
             if (!result.Succeeded)
                 return Unauthorized(ApiResponse<string>.Failure("Geçersiz kullanýcý adý veya þifre."));
+			HttpContext.Session.SetString("UserId", user.Id);
 
-
-            if (!user.EmailConfirmed)
+			if (!user.EmailConfirmed)
             {
                 Random random = new Random();
                 int number = random.Next(1000, 10000);
@@ -181,8 +186,9 @@ namespace Farm2Market.API.Controllers
 
             var token = await _appUserService.GenerateToken(user);
             var updateResult = await _userManager.UpdateAsync(user);
+			HttpContext.Session.SetString("UserId", user.Id);
 
-            var LoginResponse = new LoginResponseDto
+			var LoginResponse = new LoginResponseDto
             {
                 UserName = user.UserName,
                 EmailConfirmed = user.EmailConfirmed,

@@ -9,7 +9,7 @@ using Farm2Market.Domain.Interfaces;
 using Farm2Marrket.Application.Sevices;
 using Farm2Marrket.Application.DTOs;
 using Microsoft.EntityFrameworkCore;
-using Farm2Market.Domain.Enums;
+
 
 namespace Farm2Marrket.Application.Manager
 {

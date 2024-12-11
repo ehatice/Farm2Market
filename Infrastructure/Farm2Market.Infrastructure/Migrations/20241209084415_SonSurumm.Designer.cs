@@ -4,6 +4,7 @@ using Farm2Market.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Farm2Market.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241209084415_SonSurumm")]
+    partial class SonSurumm
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -124,23 +127,30 @@ namespace Farm2Market.Infrastructure.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("CartId"));
 
                     b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint(1)")
-                        .HasDefaultValue(true);
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("MarketReceiverId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MarketReceiverId1")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(65,30)");
 
                     b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("CartId");
+
+                    b.HasIndex("MarketReceiverId1");
 
                     b.ToTable("Carts", (string)null);
                 });
@@ -464,6 +474,17 @@ namespace Farm2Market.Infrastructure.Migrations
                     b.ToTable("MarketReceivers", (string)null);
                 });
 
+            modelBuilder.Entity("Farm2Market.Domain.Entities.Cart", b =>
+                {
+                    b.HasOne("Farm2Market.Domain.Entities.MarketReceiver", "MarketReceiver")
+                        .WithMany()
+                        .HasForeignKey("MarketReceiverId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MarketReceiver");
+                });
+
             modelBuilder.Entity("Farm2Market.Domain.Entities.CartItem", b =>
                 {
                     b.HasOne("Farm2Market.Domain.Entities.Cart", "Cart")
@@ -473,7 +494,7 @@ namespace Farm2Market.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Farm2Market.Domain.Entities.Product", "Product")
-                        .WithMany("CartItems")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -577,11 +598,6 @@ namespace Farm2Market.Infrastructure.Migrations
             modelBuilder.Entity("Farm2Market.Domain.Entities.Category", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Farm2Market.Domain.Entities.Product", b =>
-                {
-                    b.Navigation("CartItems");
                 });
 
             modelBuilder.Entity("Farm2Market.Domain.Entities.Farmer", b =>

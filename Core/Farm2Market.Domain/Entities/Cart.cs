@@ -9,7 +9,7 @@ namespace Farm2Market.Domain.Entities
     public class Cart: IBaseEntity
     {
         public int CartId { get; set; }
-        public int MarketReceiverId {  get; set; }
+        //public int MarketReceiverId {  get; set; }
         public decimal TotalPrice { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime? CreatedDate { get; set; }
@@ -17,7 +17,7 @@ namespace Farm2Market.Domain.Entities
         public DateTime? DeletedDate { get; set; }
 
         public ICollection<CartItem> CartItems { get; set; }
-        public MarketReceiver MarketReceiver { get; set; }
+        //public MarketReceiver MarketReceiver { get; set; }
 
 
 

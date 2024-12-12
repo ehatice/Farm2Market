@@ -24,6 +24,7 @@ namespace Farm2Market.Domain.Interfaces
 		Task<Category> GetCategoryByIdAsync(int id);
 		Task AddCategoryAsync(Category category);
 
+		public Task<IEnumerable<string>> GetCategory();
 
 	}
 }

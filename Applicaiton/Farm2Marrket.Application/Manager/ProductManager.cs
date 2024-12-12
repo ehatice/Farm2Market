@@ -285,6 +285,11 @@ namespace Farm2Marrket.Application.Manager
 			return category.Id; // Eklenen kategorinin ID'sini döndür
 		}
 
+		public async Task<IEnumerable<string>> GetCategory()
+		{
+			return await _productRepository.GetCategory();
+		}
+
 	}
 }
 

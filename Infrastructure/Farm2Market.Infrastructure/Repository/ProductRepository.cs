@@ -86,5 +86,12 @@ namespace Farm2Market.Infrastructure.Repository
 			await _appDbContext.Categories.AddAsync(category);
 			await _appDbContext.SaveChangesAsync();
 		}
+
+		public async Task<IEnumerable<string>> GetCategory()
+		{
+			return await _appDbContext.Categories
+				.Select(c => c.Name)
+				.ToListAsync();
+		}
 	}
 }

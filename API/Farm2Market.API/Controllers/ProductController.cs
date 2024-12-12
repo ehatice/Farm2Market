@@ -172,5 +172,12 @@ namespace Farm2Market.API.Controllers
 			}
 		}
 
+		[HttpGet()]
+		public async Task<IActionResult> GetCategory()
+		{
+			var categoryNames = await _productService.GetCategory();
+			return Ok(categoryNames);
+		}
+
 	}
 }

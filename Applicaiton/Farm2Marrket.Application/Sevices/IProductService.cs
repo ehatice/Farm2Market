@@ -21,6 +21,6 @@ namespace Farm2Marrket.Application.Sevices
 		Task<int> AddCategoryAsync(string categoryName);
 		//Task<bool> UpdateAsync(Product product);
 
-		public Task<IEnumerable<string>> GetCategory();
+		public Task<IEnumerable<Category>> GetCategory();
 	}
 }

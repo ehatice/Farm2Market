@@ -32,7 +32,8 @@ namespace Farm2Market.Infrastructure.Data
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=08080808;database=farm2markett", new MySqlServerVersion(new Version(9, 0, 0)));
+         
+              optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=root;database=farm2markett", new MySqlServerVersion(new Version(9, 0, 0)));
         }
 
 
@@ -48,8 +49,6 @@ namespace Farm2Market.Infrastructure.Data
             modelBuilder.Entity<Product>().ToTable("Products");
             modelBuilder.Entity<CartItem>().ToTable("CartItems");
             modelBuilder.Entity<Cart>().ToTable("Carts");
-
-
 
 
             base.OnModelCreating(modelBuilder);

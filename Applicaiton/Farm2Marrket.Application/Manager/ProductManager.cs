@@ -79,7 +79,7 @@ namespace Farm2Marrket.Application.Manager
                     Name = product.Name,
                     WeightOrAmount = product.WeightOrAmount,
                     Address = product.Address,
-                    Category = category.Name,  // Enum'u string'e dönüştür
+                    Category = category.Name,  
                     Quality = product.Quality,
                     Price = product.Price,
                     IsActive = product.IsActive,

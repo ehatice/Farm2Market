@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Farm2Market.Infrastructure.EntityTypeConfig
 {
-    public class CartConfig: BaseEnitityConfig<Cart>
+    public class CartConfig : BaseEnitityConfig<Cart>
     {
         public void Configure(EntityTypeBuilder<Cart> builder)
         {
@@ -18,10 +18,10 @@ namespace Farm2Market.Infrastructure.EntityTypeConfig
                    .HasForeignKey(ci => ci.CartId);
 
 
-           // builder.HasOne(c => c.MarketReceiver) 
-           //   .WithOne(mr => mr.Cart)        
-            //  .HasForeignKey<Cart>(c => c.MarketReceiverId)
-            //  .OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(c => c.MarketReceiver) 
+              .WithOne(mr => mr.Cart)        
+              .HasForeignKey<Cart>(c => c.MarketReceiverId)
+              .OnDelete(DeleteBehavior.Cascade);
 
         }
 

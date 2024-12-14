@@ -4,6 +4,7 @@ using Farm2Market.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Farm2Market.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241214151946_imageler")]
+    partial class imageler
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -134,10 +137,6 @@ namespace Farm2Market.Infrastructure.Migrations
                         .HasColumnType("tinyint(1)")
                         .HasDefaultValue(true);
 
-                    b.Property<string>("MarketReceiverId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(65,30)");
 
@@ -145,9 +144,6 @@ namespace Farm2Market.Infrastructure.Migrations
                         .HasColumnType("datetime");
 
                     b.HasKey("CartId");
-
-                    b.HasIndex("MarketReceiverId")
-                        .IsUnique();
 
                     b.ToTable("Carts", (string)null);
                 });
@@ -234,12 +230,15 @@ namespace Farm2Market.Infrastructure.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<byte[]>("Image1")
+                        .IsRequired()
                         .HasColumnType("longblob");
 
                     b.Property<byte[]>("Image2")
+                        .IsRequired()
                         .HasColumnType("longblob");
 
                     b.Property<byte[]>("Image3")
+                        .IsRequired()
                         .HasColumnType("longblob");
 
                     b.Property<bool>("IsActive")
@@ -476,17 +475,6 @@ namespace Farm2Market.Infrastructure.Migrations
                     b.ToTable("MarketReceivers", (string)null);
                 });
 
-            modelBuilder.Entity("Farm2Market.Domain.Entities.Cart", b =>
-                {
-                    b.HasOne("Farm2Market.Domain.Entities.MarketReceiver", "MarketReceiver")
-                        .WithOne("Cart")
-                        .HasForeignKey("Farm2Market.Domain.Entities.Cart", "MarketReceiverId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MarketReceiver");
-                });
-
             modelBuilder.Entity("Farm2Market.Domain.Entities.CartItem", b =>
                 {
                     b.HasOne("Farm2Market.Domain.Entities.Cart", "Cart")
@@ -610,12 +598,6 @@ namespace Farm2Market.Infrastructure.Migrations
             modelBuilder.Entity("Farm2Market.Domain.Entities.Farmer", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Farm2Market.Domain.Entities.MarketReceiver", b =>
-                {
-                    b.Navigation("Cart")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

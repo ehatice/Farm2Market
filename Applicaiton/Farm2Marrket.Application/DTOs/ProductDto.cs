@@ -19,8 +19,10 @@ namespace Farm2Marrket.Application.DTOs
 		public string Quality { get; set; }
         public int Quantity { get; set; }
         public decimal Price { get; set; }
-        public List<string> Image { get; set; }
-        public string UnitType { get; set; }
+		public string Image1 { get; set; }
+		public string? Image2 { get; set; }
+		public string? Image3 { get; set; }
+		public string UnitType { get; set; }
         public bool IsActive { get; set; }
     }
 }

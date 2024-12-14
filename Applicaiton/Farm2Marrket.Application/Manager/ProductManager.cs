@@ -22,72 +22,81 @@ namespace Farm2Marrket.Application.Manager
         }
         public async Task<ProductResponseDto> AddProduct(Guid farmerId, ProductDto productDto)
         {
-			List<byte[]> imageBytesList = new List<byte[]>();
+			// Resim verilerini byte dizilerine dönüştürme
+			byte[] image1Bytes = null, image2Bytes = null, image3Bytes = null;
 
-			if (productDto.Image != null && productDto.Image.Any())
+			if (!string.IsNullOrEmpty(productDto.Image1))
 			{
-				foreach (var base64Image in productDto.Image)
-				{
-					if (!string.IsNullOrEmpty(base64Image))
-					{
-						try
-						{
-							var imageBytes = Convert.FromBase64String(base64Image);
-							imageBytesList.Add(imageBytes);
-						}
-						catch (FormatException ex)
-						{
-							Console.WriteLine("Invalid base64 string: " + ex.Message);
-						}
-					}
-				}
+				image1Bytes = Convert.FromBase64String(productDto.Image1);
+			}
+			if (!string.IsNullOrEmpty(productDto.Image2))
+			{
+				image2Bytes = Convert.FromBase64String(productDto.Image2);
+			}
+			if (!string.IsNullOrEmpty(productDto.Image3))
+			{
+				image3Bytes = Convert.FromBase64String(productDto.Image3);
 			}
 
-			// Category'yi enum türüne dönüştür
-			//ProductCategory categoryEnum;
+			// En az bir resmin zorunlu olduğu kontrolü
+			if (image1Bytes == null && image2Bytes == null && image3Bytes == null)
+			{
+				throw new Exception("At least one product image is required.");
+			}
+
+			// Kategori kontrolü
 			var category = await _productRepository.Categories.FirstOrDefaultAsync(c => c.Id == productDto.CategoryId);
+			if (category == null)
+			{
+				throw new Exception("Category not found.");
+			}
 
+			// Yeni ürün oluşturma
 			var product = new Product
-                {
-                    Name = productDto.Name,
-                    Description = productDto.Description,
-                    WeightOrAmount = productDto.WeightOrAmount,
-                    Address = productDto.Address,
-                    FullAddress = productDto.FullAddress,
-                    Category = category,  // Enum olarak kaydediliyor
-                    Quality = productDto.Quality,
-                    Price = productDto.Price,
-                    FarmerId = farmerId,
-                    Image = imageBytesList,
-                    UnitType = productDto.UnitType,
-                    CreatedDate = DateTime.Now,
-                };
+			{
+				Name = productDto.Name,
+				Description = productDto.Description,
+				WeightOrAmount = productDto.WeightOrAmount,
+				Address = productDto.Address,
+				FullAddress = productDto.FullAddress,
+				Category = category,
+				Quality = productDto.Quality,
+				Price = productDto.Price,
+				FarmerId = farmerId,
+				Image1 = image1Bytes,
+				Image2 = image2Bytes,
+				Image3 = image3Bytes,
+				UnitType = productDto.UnitType,
+				CreatedDate = DateTime.Now,
+			};
 
-                try
-                {
-                    await _productRepository.AddAsync(product);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("An error occurred while adding the product: " + ex.Message);
-                    throw;
-                }
+			// Veritabanına ekleme işlemi
+			try
+			{
+				await _productRepository.AddAsync(product);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("An error occurred while adding the product: " + ex.Message);
+				throw;
+			}
 
-                var productResponse = new ProductResponseDto
-                {
-                    Id = product.Id,
-                    Name = product.Name,
-                    WeightOrAmount = product.WeightOrAmount,
-                    Address = product.Address,
-                    Category = category.Name,  // Enum'u string'e dönüştür
-                    Quality = product.Quality,
-                    Price = product.Price,
-                    IsActive = product.IsActive,
-                };
+			// Dönüş objesi oluşturma
+			var productResponse = new ProductResponseDto
+			{
+				Id = product.Id,
+				Name = product.Name,
+				WeightOrAmount = product.WeightOrAmount,
+				Address = product.Address,
+				Category = category.Name, // Kategori adı
+				Quality = product.Quality,
+				Price = product.Price,
+				IsActive = product.IsActive,
+			};
 
-                return productResponse;  // Burada return ekliyoruz
+			return productResponse;
 
-        }
+		}
 
 
         public async Task DeleteProductAsync(int id)
@@ -122,9 +131,9 @@ namespace Farm2Marrket.Application.Manager
                 Quality = product.Quality,
                 Quantity = product.Quantity,
                 Price = product.Price,
-				Image = product.Image != null && product.Image.Any()
-		? product.Image.Select(image => Convert.ToBase64String(image)).ToList() // byte[] -> Base64 for each image
-		: new List<string>(), // byte[] -> Base64
+				Image1 = product.Image1 != null ? Convert.ToBase64String(product.Image1) : null,
+				Image2 = product.Image2 != null ? Convert.ToBase64String(product.Image2) : null,
+				Image3 = product.Image3 != null ? Convert.ToBase64String(product.Image3) : null,
 				UnitType = product.UnitType,
                 //FarmerId = product.FarmerId,
                 //IsActive = product.IsActive
@@ -150,9 +159,9 @@ namespace Farm2Marrket.Application.Manager
                 Quality = product.Quality,
                 Quantity = product.Quantity,
                 Price = product.Price,
-				Image = product.Image != null && product.Image.Any()
-		? product.Image.Select(image => Convert.ToBase64String(image)).ToList() // Her bir byte[] -> Base64
-		: new List<string>(), // byte[] -> Base64
+				Image1 = product.Image1 != null ? Convert.ToBase64String(product.Image1) : null,
+				Image2 = product.Image2 != null ? Convert.ToBase64String(product.Image2) : null,
+				Image3 = product.Image3 != null ? Convert.ToBase64String(product.Image3) : null,
 				UnitType = product.UnitType,
                 //FarmerId = product.FarmerId,
                 //IsActive = product.IsActive
@@ -211,26 +220,23 @@ namespace Farm2Marrket.Application.Manager
 			product.Address = productDto.Address;
 			product.FullAddress = productDto.FullAddress;
 			product.CategoryId = productDto.CategoryId;
-			// Enum dönüşümü
-			//if (Enum.TryParse<ProductCategory>(productDto.Category, out var category))
-			//{
-			//	product.Category = category;
-			//}
-			//else
-			//{
-			//	throw new Exception("Invalid category value.");
-			//}
-
 			product.Quality = productDto.Quality;
 			product.Quantity = productDto.Quantity;
 			product.Price = productDto.Price;
-			if (productDto.Image != null && productDto.Image.Any())
+			if (!string.IsNullOrEmpty(productDto.Image1))
 			{
-				product.Image = productDto.Image
-					.Where(image => !string.IsNullOrEmpty(image)) // Geçerli resim değerlerini al
-					.Select(image => Convert.FromBase64String(image)) // Base64 -> byte[]
-					.ToList();
-			} // Resim değişmemişse mevcut resmi korur
+				product.Image1 = Convert.FromBase64String(productDto.Image1);
+			}
+
+			if (!string.IsNullOrEmpty(productDto.Image2))
+			{
+				product.Image2 = Convert.FromBase64String(productDto.Image2);
+			}
+
+			if (!string.IsNullOrEmpty(productDto.Image3))
+			{
+				product.Image3 = Convert.FromBase64String(productDto.Image3);
+			}
 			product.UnitType = productDto.UnitType;
 			product.IsActive = productDto.IsActive;
 

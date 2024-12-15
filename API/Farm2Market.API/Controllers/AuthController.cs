@@ -52,14 +52,14 @@ namespace Farm2Market.API.Controllers
 		}
 
 		[HttpPost]
-        public async Task<IActionResult> ConfirmMail([FromBody]string id,int number)
+        public async Task<IActionResult> ConfirmMail(int number)
         {
 			var userId = HttpContext.Session.GetString("UserId");
 			if (string.IsNullOrEmpty(userId))
 			{
 				return Unauthorized("User is not logged in.");
 			}
-			var bisey = await _userService.ConfirmNumber(id, number);
+			var bisey = await _userService.ConfirmNumber(userId, number);
             if (bisey)
             {
 				return Ok();

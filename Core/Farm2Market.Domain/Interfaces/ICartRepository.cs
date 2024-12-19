@@ -12,7 +12,8 @@ namespace Farm2Market.Domain.Interfaces
         Task<Cart> GetCartWithItemsAsync(Guid marketReceiverId);
         Task AddCartAsync(Cart cart);
         Task SaveChangesAsync();
-
+        Task<Cart> GetCartAsync(Guid marketReceiverId);
+        Task RemoveCartItemAsync(int cartItemId);
 
     }
 }

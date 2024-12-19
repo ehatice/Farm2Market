@@ -23,7 +23,7 @@ namespace Farm2Marrket.Application.Manager
 
         public async Task AddToCart(Guid marketReceiverId, AddToCartDto model)
         {
-            
+
             var product = await _productRepository.GetProductss(model.ProdcutId);
             if (product == null)
                 throw new Exception("Ürün bulunamadı.");
@@ -32,7 +32,7 @@ namespace Farm2Marrket.Application.Manager
 
             if (cart == null)
             {
-              
+
                 cart = new Cart
                 {
                     MarketReceiverId = marketReceiverId.ToString(),
@@ -42,29 +42,59 @@ namespace Farm2Marrket.Application.Manager
                 await _cartRepository.AddCartAsync(cart);
             }
 
-            
+
             var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == model.ProdcutId);
             if (cartItem != null)
             {
-                
+
                 cartItem.Quantity += model.WeightOrAmount;
             }
             else
             {
-                
+
                 cart.CartItems.Add(new CartItem
                 {
                     ProductId = model.ProdcutId,
                     Quantity = model.WeightOrAmount,
-                   
+
                 });
             }
 
             cart.TotalPrice = cart.CartItems.Sum(ci => ci.Quantity * ci.Price);
 
-           
+
             await _cartRepository.SaveChangesAsync();
         }
-    
+
+        public async Task<CartDto> GetCartAsync(Guid marketReceiverId)
+        {
+            var cart = await _cartRepository.GetCartAsync(marketReceiverId);
+
+            if (cart == null)
+            {
+                return null;
+            }
+
+            return new CartDto
+            {
+                CartId = cart.CartId,
+                TotalPrice = cart.TotalPrice,
+                CartItems = cart.CartItems.Select(ci => new CartItemDto
+                {
+                    CartItemId = ci.CartItemId,
+                    ProductId = ci.ProductId,
+                    ProductName = ci.Product.Name,
+                    Quantity = ci.Quantity,
+                    UnitPrice = ci.Product.Price,
+                    TotalPrice = ci.Quantity * ci.Product.Price
+                }).ToList()
+            };
+
+        }
+        public async Task RemoveCartItemAsync(int cartItemId)
+        {
+            await _cartRepository.RemoveCartItemAsync(cartItemId);
+        }
+
     }
 }

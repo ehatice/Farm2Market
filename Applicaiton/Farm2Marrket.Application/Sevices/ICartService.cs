@@ -11,5 +11,9 @@ namespace Farm2Marrket.Application.Sevices
     {
         Task AddToCart(Guid marketReceiverId, AddToCartDto model);
 
+        Task<CartDto> GetCartAsync(Guid marketReceiverId);
+        Task RemoveCartItemAsync(int cartItemId);
+
+
     }
 }

@@ -50,12 +50,12 @@ namespace Farm2Market.API.Controllers
             await _emailService.SendEmailAsync(userExists.Email, "emailverificationcode", number.ToString());
             return Ok("Email sent successfully!");
 		}
-
-		[HttpPost]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPost]
         public async Task<IActionResult> ConfirmMail(int number)
         {
-			var userId = HttpContext.Session.GetString("UserId");
-			if (string.IsNullOrEmpty(userId))
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
 			{
 				return Unauthorized("User is not logged in.");
 			}

@@ -14,8 +14,6 @@ namespace Farm2Market.Infrastructure.Repository
     {
         protected readonly AppDbContext _appDbContext;
         private DbSet<Cart> _cart;
-
-
         public CartRepository(AppDbContext context)
         {
             _appDbContext = context;
@@ -35,6 +33,28 @@ namespace Farm2Market.Infrastructure.Repository
         {
             await _appDbContext.SaveChangesAsync();
         }
+
+        public async Task<Cart> GetCartAsync(Guid marketReceiverId)
+        {
+            return await _appDbContext.Carts
+            .Include(c => c.CartItems)
+            .ThenInclude(ci => ci.Product)
+            .FirstOrDefaultAsync(c => c.MarketReceiverId == marketReceiverId.ToString() && c.IsActive);
+        }
+
+
+
+        public async Task RemoveCartItemAsync(int cartItemId)
+        {
+            var cartItem = await _appDbContext.CartItems.FindAsync(cartItemId);
+
+            if (cartItem != null)
+            {
+                _appDbContext.CartItems.Remove(cartItem);
+                await _appDbContext.SaveChangesAsync();
+            }
+        }
+
 
     }
 }

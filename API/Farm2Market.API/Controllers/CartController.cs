@@ -11,7 +11,7 @@ namespace Farm2Market.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class CartController: ControllerBase 
+    public class CartController : ControllerBase
     {
         private readonly ICartService _cartService;
 
@@ -47,8 +47,62 @@ namespace Farm2Market.API.Controllers
                 return StatusCode(500, $"Hata: {ex.Message}");
             }
         }
-    
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet]
+        public async Task<IActionResult> GetCart()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("Kullanıcı kimliği bulunamadı.");
+            }
+
+            
+            if (!Guid.TryParse(userId, out var userGuid))
+            {
+                return BadRequest("Geçersiz kullanıcı kimliği.");
+            }
+
+            var cart = await _cartService.GetCartAsync(userGuid);
+
+            if (cart == null)
+            {
+                return NotFound("Sepet bulunamadı.");
+            }
+
+            return Ok(cart);
+        }
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpDelete("remove/{cartItemId}")]
+        public async Task<IActionResult> RemoveCartItem(int cartItemId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("Kullanıcı kimliği bulunamadı.");
+            }
+
+            if (cartItemId <= 0)
+            {
+                return BadRequest("Geçersiz CartItemId.");
+            }
+
+            try
+            {
+                await _cartService.RemoveCartItemAsync(cartItemId);
+                return Ok("CartItem başarıyla silindi.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Hata: {ex.Message}");
+            }
+        }
 
 
-}
+
+    }
 }

@@ -143,6 +143,10 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 
+builder.Services.AddScoped<IMarketFavoriteService, MarketFavoriteManager>();
+builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
+
+
 
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));

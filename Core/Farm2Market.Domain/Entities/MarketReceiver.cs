@@ -14,5 +14,7 @@ namespace Farm2Market.Domain.Entities
         public string Adress { get; set; }
         [InverseProperty("MarketReceiver")]
         public Cart Cart { get; set; }
+
+        public ICollection<MarketFavorite> Favorites { get; set; }
     }
 }

@@ -21,8 +21,10 @@ namespace Farm2Market.Domain.Interfaces
         Task<IEnumerable<Product>> GetProductsAsync();
         Task<IEnumerable<Product>> GetProductss(int productId);
         Task UpdateAsync(Product product);
+        Task<Product> GetProducts1(int productId);
 
-		Task<Category> GetCategoryByIdAsync(int id);
+
+        Task<Category> GetCategoryByIdAsync(int id);
 		Task AddCategoryAsync(Category category);
 
 		Task<IEnumerable<Category>> GetCategory();

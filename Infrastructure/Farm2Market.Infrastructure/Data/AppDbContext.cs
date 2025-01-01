@@ -17,8 +17,8 @@ namespace Farm2Market.Infrastructure.Data
                 : base(options)
         {
         }
-       public AppDbContext()
-       {}
+      public AppDbContext()
+      {}
         public DbSet<User> Users { get; set; }
         public DbSet<Farmer> Farmers { get; set; }
         public DbSet<MarketReceiver> MarketReceivers { get; set; }

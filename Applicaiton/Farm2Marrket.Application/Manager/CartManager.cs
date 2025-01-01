@@ -2,6 +2,7 @@
 using Farm2Market.Domain.Interfaces;
 using Farm2Marrket.Application.DTOs;
 using Farm2Marrket.Application.Sevices;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace Farm2Marrket.Application.Manager
 {
-    public class CartService : ICartService
+    public class CartManager : ICartService
     {
         private readonly ICartRepository _cartRepository;
         private readonly IProductRepository _productRepository;
 
-        public CartService(ICartRepository cartRepository, IProductRepository productRepository)
+        public CartManager(ICartRepository cartRepository, IProductRepository productRepository)
         {
             _cartRepository = cartRepository;
             _productRepository = productRepository;
@@ -24,7 +25,7 @@ namespace Farm2Marrket.Application.Manager
         public async Task AddToCart(Guid marketReceiverId, AddToCartDto model)
         {
 
-            var product = await _productRepository.GetProductss(model.ProdcutId);
+            var product = await _productRepository.GetProducts1(model.ProdcutId);
             if (product == null)
                 throw new Exception("Ürün bulunamadı.");
 
@@ -37,32 +38,27 @@ namespace Farm2Marrket.Application.Manager
                 {
                     MarketReceiverId = marketReceiverId.ToString(),
                     CartItems = new List<CartItem>(),
-                    TotalPrice = 0
+                    TotalPrice = 0,
                 };
                 await _cartRepository.AddCartAsync(cart);
             }
-
-
             var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == model.ProdcutId);
             if (cartItem != null)
             {
-
-                cartItem.Quantity += model.WeightOrAmount;
+                cartItem.WeightOrAmount += model.WeightOrAmount;
             }
             else
             {
-
                 cart.CartItems.Add(new CartItem
                 {
                     ProductId = model.ProdcutId,
-                    Quantity = model.WeightOrAmount,
-
+                    WeightOrAmount = model.WeightOrAmount,
+                    Price=product.Price,
+                    
                 });
             }
 
-            cart.TotalPrice = cart.CartItems.Sum(ci => ci.Quantity * ci.Price);
-
-
+            cart.TotalPrice = cart.CartItems.Sum(ci => ci.WeightOrAmount * ci.Price);
             await _cartRepository.SaveChangesAsync();
         }
 
@@ -84,16 +80,20 @@ namespace Farm2Marrket.Application.Manager
                     CartItemId = ci.CartItemId,
                     ProductId = ci.ProductId,
                     ProductName = ci.Product.Name,
-                    Quantity = ci.Quantity,
+                    WeightOrAmount = ci.WeightOrAmount,
                     UnitPrice = ci.Product.Price,
-                    TotalPrice = ci.Quantity * ci.Product.Price
+                    TotalPrice = ci.WeightOrAmount * ci.Product.Price
                 }).ToList()
             };
 
         }
-        public async Task RemoveCartItemAsync(int cartItemId)
+        public async Task RemoveCartItemAsync(int cartItemId,Guid marketReceiverId)
         {
+            
             await _cartRepository.RemoveCartItemAsync(cartItemId);
+            var cart = await _cartRepository.GetCartWithItemsAsync(marketReceiverId);
+            cart.TotalPrice = cart.CartItems.Sum(ci => ci.WeightOrAmount * ci.Price);
+            await _cartRepository.SaveChangesAsync();
         }
 
 

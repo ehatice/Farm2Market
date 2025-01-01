@@ -30,7 +30,7 @@ namespace Farm2Market.API.Controllers
             try
             {
                 Guid userGuid;
-                // Token'dan kullanıcı ID'sini al
+                
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 if (userId == null)
@@ -45,13 +45,13 @@ namespace Farm2Market.API.Controllers
                 }
                 else
                 {
-                    // Eğer çevrilemezse, uygun bir hata veya işlem yapabilirsiniz
+                   
                     return BadRequest(ApiResponse<string>.Failure("Geçersiz userId formatı. Lütfen doğru bir GUID girin."));
                 }
             }
             catch (Exception ex)
             {
-                // Hata durumunda 500 döndür
+              
                 return StatusCode(500, ApiResponse<string>.Failure($"Urun eklenirken hata olustu: {ex.Message}"));
             }
         }
@@ -128,9 +128,6 @@ namespace Farm2Market.API.Controllers
 
 			return Ok("Product updated successfully.");
 		}
-
-
-
 
 
 

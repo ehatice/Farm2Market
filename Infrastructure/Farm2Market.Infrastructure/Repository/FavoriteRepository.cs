@@ -19,6 +19,11 @@ namespace Farm2Market.Infrastructure.Repository
         {
             _appDbContext = context;
         }
+        public async Task<bool> IsProductFavoritedAsync(Guid marketReceiverId, int productId)
+        {
+            return await _appDbContext.MarketFavorites
+                .AnyAsync(f => f.MarketReceiverId == marketReceiverId && f.ProductId == productId);
+        }
 
         public async Task AddFavoriteAsync(Guid marketReceiverId, int productId)
         {

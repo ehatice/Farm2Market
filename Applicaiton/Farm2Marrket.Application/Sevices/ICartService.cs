@@ -1,4 +1,5 @@
-﻿using Farm2Marrket.Application.DTOs;
+﻿using Farm2Market.Domain.Entities;
+using Farm2Marrket.Application.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,9 @@ namespace Farm2Marrket.Application.Sevices
         Task AddToCart(Guid marketReceiverId, AddToCartDto model);
 
         Task<CartDto> GetCartAsync(Guid marketReceiverId);
-        Task RemoveCartItemAsync(int cartItemId);
 		Task<OrderDto> CreateOrderFromCartAsync(Guid marketReceiverId);
 
-	}
+	
+        Task RemoveCartItemAsync(int cartItemId, Guid marketReceiverId);
+    }
 }

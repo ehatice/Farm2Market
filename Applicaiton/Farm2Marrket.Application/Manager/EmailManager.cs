@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace Farm2Marrket.Application.Manager
 {
-	public class EmailService : IEmailService
+	public class EmailManager : IEmailService
 	{
 		private readonly MailSettings _emailSettings;
 
-		public EmailService(IOptions<MailSettings> emailSettings)
+		public EmailManager(IOptions<MailSettings> emailSettings)
 		{
 			_emailSettings = emailSettings.Value;
 		}

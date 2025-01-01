@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace Farm2Market.Domain.Entities
     {
         public int CartId { get; set; }
         public String MarketReceiverId {  get; set; }
+   
         public decimal TotalPrice { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime? CreatedDate { get; set; }
@@ -19,5 +21,7 @@ namespace Farm2Market.Domain.Entities
         public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
         [ForeignKey("MarketReceiverId")]
         public MarketReceiver MarketReceiver { get; set; }
+
+
     }
 }

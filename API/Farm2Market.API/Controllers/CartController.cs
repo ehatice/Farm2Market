@@ -25,7 +25,7 @@ namespace Farm2Market.API.Controllers
         [HttpPost()]
         public async Task<IActionResult> AddToCart([FromBody] AddToCartDto model)
         {
-            if (model == null || model.WeightOrAmount <= 0 || model.ProdcutId <= 0)
+            if (model == null || model.WeightOrAmount <= 0 || model.ProductId <= 0)
             {
                 return BadRequest("Geçersiz ürün bilgileri.");
             }

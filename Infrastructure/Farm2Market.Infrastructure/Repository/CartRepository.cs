@@ -94,15 +94,54 @@ namespace Farm2Market.Infrastructure.Repository
 
 		public async Task AddAsync(Order order)
 		{
-			await _appDbContext.Orders.AddAsync(order);
-			await _appDbContext.SaveChangesAsync();
+			if (order == null)
+			{
+				throw new ArgumentNullException(nameof(order), "Order cannot be null.");
+			}
+
+			try
+			{
+				await _appDbContext.Orders.AddAsync(order);
+				await _appDbContext.SaveChangesAsync();
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"An error occurred while adding the order: {ex.Message}", ex);
+			}
 		}
 
 		public async Task UpdateAsync(Cart cart)
 		{
-			_appDbContext.Carts.Update(cart);
-			await _appDbContext.SaveChangesAsync();
+			if (cart == null)
+			{
+				throw new ArgumentNullException(nameof(cart), "Cart cannot be null.");
+			}
+
+			try
+			{
+				_appDbContext.Carts.Update(cart);
+				await _appDbContext.SaveChangesAsync();
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"An error occurred while updating the cart: {ex.Message}", ex);
+			}
 		}
+
+		public async Task<Order> GetPendingOrderForUserAsync(string userId)
+		{
+			return await _appDbContext.Orders
+				.Include(o => o.OrderItems)  // Sipariş detaylarını da dahil et
+				.FirstOrDefaultAsync(o => o.MarketReceiverId == userId && o.Status == "Pending");
+		}
+
+		public async Task<Order> GetOrderByIdAsync(int orderId)
+		{
+			return await _appDbContext.Orders
+				.Include(o => o.OrderItems) // OrderItems'ı dahil ediyoruz
+				.FirstOrDefaultAsync(o => o.Id == orderId);
+		}
+
 
 	}
 }

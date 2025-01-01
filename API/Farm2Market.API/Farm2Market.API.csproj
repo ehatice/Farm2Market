@@ -16,7 +16,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.10" />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.10" />
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.10" />
-    <PackageReference Include="Stripe.net" Version="47.0.0" />
+    <PackageReference Include="Stripe.net" Version="47.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.0" />
   </ItemGroup>

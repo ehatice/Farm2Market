@@ -16,7 +16,6 @@ namespace Farm2Market.Domain.Entities
 		public decimal Price { get; set; }
 
 		public string ProductName { get; set; } // Ürünün adı
-		public string Description { get; set; }
 
 
 		[ForeignKey("OrderId")]

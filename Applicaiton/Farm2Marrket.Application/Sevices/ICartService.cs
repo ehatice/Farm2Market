@@ -17,5 +17,8 @@ namespace Farm2Marrket.Application.Sevices
 
 	
         Task RemoveCartItemAsync(int cartItemId, Guid marketReceiverId);
-    }
+        Task ClearCartAsync(Guid marketReceiverId);
+		Task<Order> GetPendingOrderForUserAsync(string userId);
+        Task<List<OrderItem>> GetOrderItemsByOrderIdAsync(int orderId);
+	}
 }

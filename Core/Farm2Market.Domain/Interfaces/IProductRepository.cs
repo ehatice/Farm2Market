@@ -32,5 +32,6 @@ namespace Farm2Market.Domain.Interfaces
 		Task UpdateAsync(Order order);
 
 
+
 	}
 }

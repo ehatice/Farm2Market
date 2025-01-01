@@ -13,6 +13,7 @@ namespace Farm2Market.Domain.Entities
         public int CartId { get; set; }
 
         public int ProductId { get; set; }
+        public string ProductName { get; set; }
 
         public int WeightOrAmount { get; set; }
 

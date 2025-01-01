@@ -19,6 +19,7 @@ namespace Farm2Market.Domain.Interfaces
 		Task UpdateAsync(Cart cart);
 
         //Task<Cart> GetCartByIdAsync(int cartId);
-
-    }
+        Task<Order> GetPendingOrderForUserAsync(string userId);
+        Task<Order> GetOrderByIdAsync(int orderId);
+	}
 }

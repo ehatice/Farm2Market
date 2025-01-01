@@ -25,7 +25,7 @@ namespace Farm2Marrket.Application.Manager
         public async Task AddToCart(Guid marketReceiverId, AddToCartDto model)
         {
 
-            var product = await _productRepository.GetProducts1(model.ProdcutId);
+            var product = await _productRepository.GetProducts1(model.ProductId);
             if (product == null)
                 throw new Exception("Ürün bulunamadı.");
 
@@ -42,7 +42,7 @@ namespace Farm2Marrket.Application.Manager
                 };
                 await _cartRepository.AddCartAsync(cart);
             }
-            var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == model.ProdcutId);
+            var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == model.ProductId);
             if (cartItem != null)
             {
                 cartItem.WeightOrAmount += model.WeightOrAmount;
@@ -51,7 +51,8 @@ namespace Farm2Marrket.Application.Manager
             {
                 cart.CartItems.Add(new CartItem
                 {
-                    ProductId = model.ProdcutId,
+                    ProductId = model.ProductId,
+                    ProductName = product.Name,
                     WeightOrAmount = model.WeightOrAmount,
                     Price=product.Price,
                     
@@ -104,6 +105,7 @@ namespace Farm2Marrket.Application.Manager
         {
             // Sepeti al
             var cart = await _cartRepository.GetCartByMarketReceiverIdAsync(marketReceiverId);
+            
 
             if (cart == null || !cart.CartItems.Any())
             {
@@ -116,20 +118,20 @@ namespace Farm2Marrket.Application.Manager
                 MarketReceiverId = cart.MarketReceiverId,
                 TotalPrice = cart.TotalPrice,
                 OrderDate = DateTime.UtcNow,
+                Status = "Pending",
                 OrderItems = cart.CartItems.Select(item => new OrderItem
                 {
                     ProductId = item.ProductId,
-                    Quantity = item.Quantity,
-                    Price = item.Price
+                    Quantity = item.WeightOrAmount,
+                    Price = item.Price,
+                    ProductName = item.ProductName,
+                    
                 }).ToList()
             };
 
             // Siparişi kaydet
             await _cartRepository.AddAsync(order);
 
-            // Sepeti temizle
-            cart.CartItems.Clear();
-            cart.TotalPrice = 0;
             await _cartRepository.UpdateAsync(cart);
 
             // DTO'yu döndür
@@ -152,5 +154,52 @@ namespace Farm2Marrket.Application.Manager
 
 
         }
-    }
+
+		public async Task ClearCartAsync(Guid marketReceiverId)
+		{
+			// Kullanıcının sepetini al
+			var cart = await _cartRepository.GetCartWithItemsAsync(marketReceiverId);
+
+			if (cart != null)
+			{
+				// Sepetteki ürünleri temizle
+				cart.CartItems.Clear();
+
+				// Sepetin toplam fiyatını sıfırla
+				cart.TotalPrice = 0;
+
+				// Değişiklikleri kaydet
+				await _cartRepository.SaveChangesAsync();
+			}
+			else
+			{
+				throw new Exception("Kullanıcıya ait sepet bulunamadı.");
+			}
+		}
+
+
+		public async Task<Order> GetPendingOrderForUserAsync(string userId)
+		{
+			var order = await _cartRepository.GetPendingOrderForUserAsync(userId);
+
+			if (order == null)
+			{
+				throw new InvalidOperationException("Pending order not found for the user.");
+			}
+
+			return order;
+		}
+
+
+		public async Task<List<OrderItem>> GetOrderItemsByOrderIdAsync(int orderId)
+		{
+			var order = await _cartRepository.GetOrderByIdAsync(orderId);
+			if (order == null)
+				return null;
+
+			return order.OrderItems.ToList();
+		}
+
+
+	}
 }

@@ -11,7 +11,7 @@ namespace Farm2Market.Domain.Entities
 	{
 		public int Id { get; set; }
 		public string MarketReceiverId { get; set; }
-		public string Status { get; set; } = "Pending";
+		public string Status { get; set; }
 		public decimal TotalPrice { get; set; }
 		public DateTime OrderDate { get; set; }
 		public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();

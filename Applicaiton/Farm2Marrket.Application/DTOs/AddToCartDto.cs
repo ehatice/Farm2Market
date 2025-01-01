@@ -9,7 +9,7 @@ namespace Farm2Marrket.Application.DTOs
     public class AddToCartDto
     {
         
-        public int ProdcutId { get; set; }
+        public int ProductId { get; set; }
         public int WeightOrAmount { get; set; }
 
     }

@@ -9,7 +9,6 @@ namespace Farm2Marrket.Application.DTOs
 	public class CreateCheckoutSessionRequest
 	{
 		public int OrderId { get; set; }
-		public string SuccessUrl { get; set; }
-		public string CancelUrl { get; set; }
+		public string MarketReceiverId { get; set; }
 	}
 }

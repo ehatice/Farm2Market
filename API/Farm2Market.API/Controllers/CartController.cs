@@ -22,7 +22,7 @@ namespace Farm2Market.API.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
 
         // POST: api/cart/add
-        [HttpPost("Add")]
+        [HttpPost()]
         public async Task<IActionResult> AddToCart([FromBody] AddToCartDto model)
         {
             if (model == null || model.WeightOrAmount <= 0 || model.ProdcutId <= 0)
@@ -103,6 +103,34 @@ namespace Farm2Market.API.Controllers
         }
 
 
+		[Authorize(AuthenticationSchemes = "Bearer")]
+		[HttpPost()]
+		public async Task<IActionResult> CreateOrderFromCart()
+		{
+			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-    }
+			if (string.IsNullOrEmpty(userId))
+			{
+				return Unauthorized("User is not logged in.");
+			}
+
+			if (!Guid.TryParse(userId, out var userGuid))
+			{
+				return BadRequest("Invalid user ID.");
+			}
+
+			try
+			{
+				var order = await _cartService.CreateOrderFromCartAsync(userGuid);
+				return Ok(order);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { Message = ex.Message });
+			}
+		}
+
+
+
+	}
 }

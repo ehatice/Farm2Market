@@ -14,5 +14,6 @@ namespace Farm2Market.Domain.Entities
 
 		// Navigation Property for related Products
 		public ICollection<Product> Products { get; set; }
+
 	}
 }

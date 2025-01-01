@@ -28,14 +28,16 @@ namespace Farm2Market.Infrastructure.Data
 
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Cart>Carts { get; set; }
+        public DbSet<Order> Orders { get; set; }
+		public DbSet<OrderItem> OrderItems { get; set; }
 
-        public DbSet<MarketFavorite> MarketFavorites { get; set; }
+		public DbSet<MarketFavorite> MarketFavorites { get; set; }
 
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
          
-              optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=root;database=farm2markett", new MySqlServerVersion(new Version(9, 0, 0)));
+              optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=08080808;database=farm2markett", new MySqlServerVersion(new Version(8, 0, 10)));
         }
 
 
@@ -50,9 +52,9 @@ namespace Farm2Market.Infrastructure.Data
             modelBuilder.Entity<Product>().ToTable("Products");
             modelBuilder.Entity<CartItem>().ToTable("CartItems");
             modelBuilder.Entity<Cart>().ToTable("Carts");
-
-
-            base.OnModelCreating(modelBuilder);
+			modelBuilder.Entity<OrderItem>().ToTable("OrderItems");
+			modelBuilder.Entity<Order>().ToTable("Orders");
+			modelBuilder.Entity<Category>().ToTable("Categories");
             modelBuilder.ApplyConfiguration(new ProductConfig());
             modelBuilder.ApplyConfiguration(new CartConfig());
             modelBuilder.Entity<User>().HasData(

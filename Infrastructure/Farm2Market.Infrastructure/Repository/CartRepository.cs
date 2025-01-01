@@ -56,5 +56,30 @@ namespace Farm2Market.Infrastructure.Repository
         }
 
 
-    }
+
+
+
+
+
+
+		public async Task<Cart> GetCartByMarketReceiverIdAsync(Guid marketReceiverId)
+		{
+			return await _appDbContext.Carts
+				.Include(c => c.CartItems)
+				.FirstOrDefaultAsync(c => c.MarketReceiverId == marketReceiverId.ToString());
+		}
+
+		public async Task AddAsync(Order order)
+		{
+			await _appDbContext.Orders.AddAsync(order);
+			await _appDbContext.SaveChangesAsync();
+		}
+
+		public async Task UpdateAsync(Cart cart)
+		{
+			_appDbContext.Carts.Update(cart);
+			await _appDbContext.SaveChangesAsync();
+		}
+
+	}
 }

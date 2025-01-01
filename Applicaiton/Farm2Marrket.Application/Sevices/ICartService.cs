@@ -13,7 +13,7 @@ namespace Farm2Marrket.Application.Sevices
 
         Task<CartDto> GetCartAsync(Guid marketReceiverId);
         Task RemoveCartItemAsync(int cartItemId);
+		Task<OrderDto> CreateOrderFromCartAsync(Guid marketReceiverId);
 
-
-    }
+	}
 }

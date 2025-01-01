@@ -22,5 +22,8 @@ namespace Farm2Marrket.Application.Sevices
 		//Task<bool> UpdateAsync(Product product);
 
 		public Task<IEnumerable<Category>> GetCategory();
+
+		Task<Order> GetOrderByIdAsync(int orderId);
+		Task<bool> UpdateOrderStatus(int orderId, string status);
 	}
 }

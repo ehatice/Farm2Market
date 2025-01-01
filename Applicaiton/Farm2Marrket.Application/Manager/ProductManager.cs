@@ -296,6 +296,21 @@ namespace Farm2Marrket.Application.Manager
 			return await _productRepository.GetCategory();
 		}
 
+
+		public async Task<Order> GetOrderByIdAsync(int orderId)
+		{
+			return await _productRepository.GetOrderByIdAsync(orderId);
+		}
+
+		public async Task<bool> UpdateOrderStatus(int orderId, string status)
+		{
+			var order = await _productRepository.GetOrderByIdAsync(orderId);
+			if (order == null) return false;
+
+			order.Status = status;
+			await _productRepository.UpdateAsync(order);
+			return true;
+		}
 	}
 }
 

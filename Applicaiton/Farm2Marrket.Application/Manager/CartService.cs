@@ -96,5 +96,61 @@ namespace Farm2Marrket.Application.Manager
             await _cartRepository.RemoveCartItemAsync(cartItemId);
         }
 
+
+
+
+
+        public async Task<OrderDto> CreateOrderFromCartAsync(Guid marketReceiverId)
+        {
+            // Sepeti al
+            var cart = await _cartRepository.GetCartByMarketReceiverIdAsync(marketReceiverId);
+
+            if (cart == null || !cart.CartItems.Any())
+            {
+                throw new Exception("The cart is empty.");
+            }
+
+            // Siparişi oluştur
+            var order = new Order
+            {
+                MarketReceiverId = cart.MarketReceiverId,
+                TotalPrice = cart.TotalPrice,
+                OrderDate = DateTime.UtcNow,
+                OrderItems = cart.CartItems.Select(item => new OrderItem
+                {
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    Price = item.Price
+                }).ToList()
+            };
+
+            // Siparişi kaydet
+            await _cartRepository.AddAsync(order);
+
+            // Sepeti temizle
+            cart.CartItems.Clear();
+            cart.TotalPrice = 0;
+            await _cartRepository.UpdateAsync(cart);
+
+            // DTO'yu döndür
+            return new OrderDto
+            {
+                OrderId = order.Id,
+                MarketReceiverId = order.MarketReceiverId,
+                TotalPrice = order.TotalPrice,
+                OrderDate = order.OrderDate,
+                Items = order.OrderItems.Select(oi => new OrderItemDto
+                {
+                    ProductId = oi.ProductId,
+                    Quantity = oi.Quantity,
+                    Price = oi.Price,
+                    Total = oi.Quantity * oi.Price
+                }).ToList()
+            };
+
+
+
+
+        }
     }
 }

@@ -102,5 +102,22 @@ namespace Farm2Market.Infrastructure.Repository
 		})
 		.ToListAsync();
 		}
+
+
+
+		public async Task<Order> GetOrderByIdAsync(int orderId)
+		{
+			return await _appDbContext.Set<Order>()
+				.Include(o => o.OrderItems)
+				.FirstOrDefaultAsync(o => o.Id == orderId);
+		}
+
+		public async Task UpdateAsync(Order order)
+		{
+			_appDbContext.Set<Order>().Update(order);
+			await _appDbContext.SaveChangesAsync();
+		}
+
+
 	}
 }

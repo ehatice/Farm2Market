@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Stripe;
 
 
 
@@ -135,6 +136,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddControllersWithViews();
+
+
+
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
 
 builder.Services.AddScoped<IProductService, ProductManager>();

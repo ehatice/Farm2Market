@@ -1,4 +1,5 @@
 ﻿using Farm2Market.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,8 @@ namespace Farm2Market.Infrastructure.EntityTypeConfig
             builder.HasMany(p => p.FavoritedByMarkets)
             .WithOne(f => f.Product)
             .HasForeignKey(f => f.ProductId);
+
+
         }
     }
 }

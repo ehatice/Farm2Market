@@ -20,9 +20,7 @@ namespace Farm2Market.API.Controllers
             _cartService = cartService;
         }
         [Authorize(AuthenticationSchemes = "Bearer")]
-
-        // POST: api/cart/add
-        [HttpPost("Add")]
+        [HttpPost()]
         public async Task<IActionResult> AddToCart([FromBody] AddToCartDto model)
         {
             if (model == null || model.WeightOrAmount <= 0 || model.ProdcutId <= 0)
@@ -46,6 +44,7 @@ namespace Farm2Market.API.Controllers
             {
                 return StatusCode(500, $"Hata: {ex.Message}");
             }
+            
         }
 
         [Authorize(AuthenticationSchemes = "Bearer")]
@@ -76,14 +75,13 @@ namespace Farm2Market.API.Controllers
         }
 
         [Authorize(AuthenticationSchemes = "Bearer")]
-        [HttpDelete("remove/{cartItemId}")]
+        [HttpDelete("{cartItemId}")]
         public async Task<IActionResult> RemoveCartItem(int cartItemId)
-        {
+        {   
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
+            if (!Guid.TryParse(userId, out var userGuid))
             {
-                return Unauthorized("Kullanıcı kimliği bulunamadı.");
+                return BadRequest("Geçersiz kullanıcı kimliği.");
             }
 
             if (cartItemId <= 0)
@@ -93,7 +91,7 @@ namespace Farm2Market.API.Controllers
 
             try
             {
-                await _cartService.RemoveCartItemAsync(cartItemId);
+                await _cartService.RemoveCartItemAsync(cartItemId, userGuid);
                 return Ok("CartItem başarıyla silindi.");
             }
             catch (Exception ex)

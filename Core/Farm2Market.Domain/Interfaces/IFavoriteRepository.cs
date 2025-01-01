@@ -12,5 +12,6 @@ namespace Farm2Market.Domain.Interfaces
         Task AddFavoriteAsync(Guid MarketReceiverId, int productId);
         Task RemoveFavoriteAsync(Guid MarketReceiverId, int productId);
         Task<List<Product>> GetFavoritesByMarketAsync(Guid MarketReceiverId);
+        Task<bool> IsProductFavoritedAsync(Guid marketReceiverId, int productId);
     }
 }

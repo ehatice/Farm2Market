@@ -21,7 +21,7 @@ namespace Farm2Market.API.Controllers
             _favoriteManager = favoriteManager;
         }
 
-        // Helper method to get the user ID
+        
         private Guid? GetUserIdFromClaims()
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -42,9 +42,23 @@ namespace Farm2Market.API.Controllers
                 return Unauthorized(new { message = "Invalid or missing user ID." });
             }
 
-            await _favoriteManager.AddFavoriteAsync(marketReceiverId.Value, productId);
-            return Ok(new { message = "Favorite added successfully." });
+            try
+            {
+                await _favoriteManager.AddFavoriteAsync(marketReceiverId.Value, productId);
+                return Ok(new { message = "Favorite added successfully." });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Ürün zaten favorilere eklenmiş
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                // Diğer tüm hatalar
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+            }
         }
+
 
         [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpDelete("remove")]

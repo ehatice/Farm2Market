@@ -48,11 +48,18 @@ namespace Farm2Market.Infrastructure.Repository
                 .Where(p => !p.IsActive)
                 .ToListAsync();
         }
-        public async Task<IEnumerable<Product>> GetProductss(int productId) //Sepet için id ile Product alıyoryz
+
+
+        public async Task<IEnumerable<Product>> GetProductss(int productId) //Sepet için id ile Product alıyoruz.
         {
             return await _appDbContext.Products
                 .Where(p => p.Id == productId && !p.IsActive)
                 .ToListAsync();
+        }
+
+        public async Task<Product> GetProducts1(int productId) //Sepet için id ile Product alıyoruz.
+        {
+            return await _appDbContext.Products.FirstOrDefaultAsync(p => p .Id == productId && p.IsActive== false);
         }
 
 

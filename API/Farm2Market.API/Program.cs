@@ -133,14 +133,14 @@ builder.Services.AddScoped<IUserService, UserManager>();
 builder.Services.AddScoped<IAppUserService, AppUserManager>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("SmtpSettings"));
-builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddTransient<IEmailService, EmailManager>();
 builder.Services.AddControllersWithViews();
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
 
 builder.Services.AddScoped<IProductService, ProductManager>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
-builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<ICartService, CartManager>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 builder.Services.AddScoped<IMarketFavoriteService, MarketFavoriteManager>();

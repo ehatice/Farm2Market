@@ -45,15 +45,38 @@ namespace Farm2Market.Infrastructure.Repository
 
 
         public async Task RemoveCartItemAsync(int cartItemId)
-        {
-            var cartItem = await _appDbContext.CartItems.FindAsync(cartItemId);
+        { 
+                var cartItem = await _appDbContext.CartItems.Include(ci => ci.Cart).FirstOrDefaultAsync(ci => ci.CartItemId == cartItemId);
 
-            if (cartItem != null)
-            {
+                if (cartItem == null)
+                    throw new Exception("Cart item not found.");
+
+                if (cartItem.Cart != null)
+                {
+                    cartItem.Cart.TotalPrice -= cartItem.Price;
+                    cartItem.Cart.TotalPrice = Math.Max(0, cartItem.Cart.TotalPrice); // Negatif değerleri önle
+                }
                 _appDbContext.CartItems.Remove(cartItem);
+
                 await _appDbContext.SaveChangesAsync();
-            }
+            
+
         }
+
+        //public async Task<Cart> GetCartByIdAsync(int cartId)
+        //{
+        //  var cart = await _appDbContext.Carts
+        //    .Include(c => c.CartItems)
+        //  .ThenInclude(ci => ci.Product)
+        //  .FirstOrDefaultAsync(c => c.CartId == cartId);
+
+        //if (cart != null)
+        //{
+        //    cart.CalculateTotalPrice();
+        //}
+
+        //return cart;
+        //}
 
 
     }

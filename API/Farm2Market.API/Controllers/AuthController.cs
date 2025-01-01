@@ -94,9 +94,7 @@ namespace Farm2Market.API.Controllers
 			//await _emailService.SendEmailAsync(model.Email, "emailverificationcode", number.ToString());
 			//var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 			//var confirmationlink = Url.Action("ConfirmMail", "Auth", new { token , email = user.Email, userId = user.Id });
-			
 
-			// Kullanýcýyý kaydet
 			var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)

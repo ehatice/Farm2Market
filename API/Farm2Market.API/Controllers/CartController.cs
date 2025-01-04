@@ -6,6 +6,7 @@ using Farm2Marrket.Application.Sevices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Stripe.Climate;
 using System.Security.Claims;
 namespace Farm2Market.API.Controllers
 {
@@ -129,7 +130,51 @@ namespace Farm2Market.API.Controllers
 				return BadRequest(new { Message = ex.Message });
 			}
 		}
+		[Authorize(AuthenticationSchemes = "Bearer")]
+		[HttpGet()]
+		public async Task<IActionResult> GetPaidOrders()
+		{
+			var marketReceiverId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			if (string.IsNullOrEmpty(marketReceiverId))
+			{
+				return Unauthorized("User is not logged in.");
+			}
 
+			if (!Guid.TryParse(marketReceiverId, out var marketReceiverGuid))
+			{
+				return BadRequest("Invalid user ID.");
+			}
+
+			var orders = await _cartService.GetPaidOrdersForUserAsync(marketReceiverId);
+
+			if (orders == null || !orders.Any())
+				return NotFound("Ödenmiş sipariş bulunamadı.");
+
+			return Ok(orders);
+		}
+
+
+
+
+		[Authorize(AuthenticationSchemes = "Bearer")]
+		[HttpGet()]
+		public async Task<IActionResult> GetSoldOrders()
+		{
+			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+			if (string.IsNullOrEmpty(userId))
+			{
+				return Unauthorized("User is not logged in.");
+			}
+
+			if (!Guid.TryParse(userId, out var userGuid))
+			{
+				return BadRequest("Invalid user ID.");
+			}
+
+			var soldOrders = await _cartService.GetSoldOrdersByUserIdAsync(userGuid);
+			return Ok(soldOrders);
+		}
 
 
 	}

@@ -126,7 +126,11 @@ namespace Farm2Market.Infrastructure.Repository
 		}
 
 
-		
+		public async Task DeleteAsync(Product product)
+		{
+			_appDbContext.Products.Remove(product);
+			await _appDbContext.SaveChangesAsync();
+		}
 
 
 	}

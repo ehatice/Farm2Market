@@ -313,6 +313,16 @@ namespace Farm2Marrket.Application.Manager
 		}
 
 
+		public async Task<bool> PermaDeleteProductAsync(int productId)
+		{
+			var product = await _productRepository.GetByIdAsync(productId);
+			if (product == null)
+				throw new Exception("Product not found.");
+
+			await _productRepository.DeleteAsync(product);
+			return true;
+		}
+
 	}
 }
 

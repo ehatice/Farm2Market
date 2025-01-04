@@ -74,8 +74,29 @@ public class PaymentController : ControllerBase
 		var service = new SessionService();
 		var session = service.Create(options);
 
+		// Ödeme başarılı olduğunda yapılacak işlemler
+		var orderId = order.Id;
+		var orderItems = await _cartService.GetOrderItemsByOrderIdAsync(orderId);
+
+		// Ürün miktarını güncelleme
+		foreach (var item in orderItems)
+		{
+			await _productService.UpdateProductQuantity(item.ProductId, item.Quantity);
+		}
+
+		// Sepeti temizleyin
+		await _cartService.ClearCartAsync(Guid.Parse(marketReceiverId));  // marketReceiverId'yi Guid'e dönüştür
+
 		return Ok(new { sessionId = session.Id, url = session.Url });
 	}
+
+
+
+
+
+
+
+
 	[Authorize(AuthenticationSchemes = "Bearer")]
 	[HttpPost("StripeWebhook")]
 	public async Task<IActionResult> StripeWebhook()

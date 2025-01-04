@@ -201,5 +201,44 @@ namespace Farm2Marrket.Application.Manager
 		}
 
 
+		public async Task<List<PaidOrderDto>> GetPaidOrdersForUserAsync(string marketReceiverId)
+		{
+			var orders = await _cartRepository.GetOrdersByStatusAsync(marketReceiverId, "Paid");
+
+			return orders.Select(order => new PaidOrderDto
+			{
+				OrderId = order.Id,
+				OrderDate = order.OrderDate,
+                TotalPrice = order.TotalPrice,
+				Items = order.OrderItems.Select(item => new PaidOrderItemDto
+				{
+					ProductName = item.ProductName,
+					Quantity = item.Quantity,
+					Price = item.Price
+				}).ToList()
+			}).ToList();
+		}
+
+
+
+
+		public async Task<List<SoldOrderDto>> GetSoldOrdersByUserIdAsync(Guid userId)
+		{
+			var orders = await _cartRepository.GetSoldOrdersByUserIdAsync(userId);
+
+			return orders.Select(order => new SoldOrderDto
+			{
+				OrderId = order.Id,
+				OrderDate = order.OrderDate,
+				MarketReceiverName = order.MarketReceiver.UserName,
+				Products = order.OrderItems.Select(oi => new SoldProductDto
+				{
+					ProductId = oi.ProductId,
+					Name = oi.Product.Name,
+					Quantity = oi.Quantity,
+					Price = oi.Price
+				}).ToList()
+			}).ToList();
+		}
 	}
 }

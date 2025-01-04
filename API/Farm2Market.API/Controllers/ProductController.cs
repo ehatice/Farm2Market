@@ -176,5 +176,24 @@ namespace Farm2Market.API.Controllers
 			return Ok(categoryNames);
 		}
 
+
+
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> PermaDeleteProduct(int id)
+		{
+			try
+			{
+				var result = await _productService.PermaDeleteProductAsync(id);
+				if (result)
+					return Ok(new { message = "Product deleted successfully." });
+
+				return BadRequest(new { message = "Failed to delete product." });
+			}
+			catch (Exception ex)
+			{
+				return NotFound(new { message = ex.Message });
+			}
+		}
+
 	}
 }

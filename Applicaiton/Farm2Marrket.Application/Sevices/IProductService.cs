@@ -26,5 +26,6 @@ namespace Farm2Marrket.Application.Sevices
 		Task<Order> GetOrderByIdAsync(int orderId);
 		Task<bool> UpdateOrderStatus(int orderId, string status);
 
+		Task<bool> PermaDeleteProductAsync(int productId);
 	}
 }

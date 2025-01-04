@@ -143,5 +143,31 @@ namespace Farm2Market.Infrastructure.Repository
 		}
 
 
+		public async Task<List<Order>> GetOrdersByStatusAsync(string marketReceiverId, string status)
+		{
+			return await _appDbContext.Orders
+				.Include(o => o.OrderItems)
+				.Where(o => o.MarketReceiverId == marketReceiverId && o.Status == status)
+				.ToListAsync();
+		}
+
+		public async Task<List<Order>> GetSoldOrdersByUserIdAsync(Guid userId)
+		{
+			var orders = await _appDbContext.Orders
+	.Include(o => o.MarketReceiver)  // MarketReceiver'ı da dahil ediyoruz
+	.Include(o => o.OrderItems)
+	.ThenInclude(oi => oi.Product)
+	.Where(o => o.Status == "Paid")
+	.ToListAsync();
+
+			// FarmerId'ye göre OrderItems'ı filtreleyip siparişleri döndürelim
+			var filteredOrders = orders
+				.Where(o => o.OrderItems.Any(oi => oi.Product.FarmerId == userId))
+				.ToList();
+
+			return filteredOrders;
+		}
+
+
 	}
 }

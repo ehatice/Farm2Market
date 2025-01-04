@@ -31,6 +31,7 @@ namespace Farm2Market.Domain.Interfaces
 		Task<Order> GetOrderByIdAsync(int orderId);
 		Task UpdateAsync(Order order);
 
+		Task DeleteAsync(Product product);
 
 
 	}

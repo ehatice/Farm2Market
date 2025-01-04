@@ -70,7 +70,7 @@ public class PaymentController : ControllerBase
 			SuccessUrl = successUrl,
 			CancelUrl = cancelUrl
 		};
-
+		
 		var service = new SessionService();
 		var session = service.Create(options);
 
@@ -84,6 +84,7 @@ public class PaymentController : ControllerBase
 
 		try
 		{
+			Request.Headers.Add("Stripe-Signature", "application/json");
 			// Stripe'dan gelen event'i doğrula
 			var stripeEvent = EventUtility.ConstructEvent(
 				json,

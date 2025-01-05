@@ -220,6 +220,19 @@ namespace Farm2Marrket.Application.Manager
 		}
 
 
+		public async Task UpdateOrderStatusAsync(int orderId)
+		{
+			// Siparişi veritabanından al
+			var order = await _cartRepository.GetOrderByIdAsync(orderId);
+			if (order == null)
+				throw new Exception("Sipariş bulunamadı.");
+
+			// Sipariş durumunu Paid olarak güncelle
+			order.Status = "Paid";
+
+			// Güncellemeyi repo katmanına yönlendir
+			await _cartRepository.UpdateOrderStatusAsync(order);
+		}
 
 
 		public async Task<List<SoldOrderDto>> GetSoldOrdersByUserIdAsync(Guid userId)

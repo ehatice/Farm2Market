@@ -10,7 +10,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 
 [Route("api/[controller]")]
-[ApiController]
+[ApiController][Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
 public class PaymentController : ControllerBase
 {
 	private readonly StripeSettings _stripeSettings;
@@ -75,6 +75,10 @@ public class PaymentController : ControllerBase
 		var session = service.Create(options);
 
 		// Ödeme başarılı olduğunda yapılacak işlemler
+
+		order.Status = "Paid"; // Sipariş durumunu Paid olarak güncelleyin
+		await _cartService.UpdateOrderStatusAsync(order.Id);
+
 		var orderId = order.Id;
 		var orderItems = await _cartService.GetOrderItemsByOrderIdAsync(orderId);
 

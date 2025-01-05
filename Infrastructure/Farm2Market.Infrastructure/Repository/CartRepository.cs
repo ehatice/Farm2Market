@@ -168,6 +168,12 @@ namespace Farm2Market.Infrastructure.Repository
 			return filteredOrders;
 		}
 
+		public async Task UpdateOrderStatusAsync(Order order)
+		{
+			_appDbContext.Orders.Update(order);
+			await _appDbContext.SaveChangesAsync();
+		}
+
 
 	}
 }

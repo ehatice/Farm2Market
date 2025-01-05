@@ -25,5 +25,6 @@ namespace Farm2Market.Domain.Interfaces
 		Task<List<Order>> GetOrdersByStatusAsync(string marketReceiverId, string status);
 
         Task<List<Order>> GetSoldOrdersByUserIdAsync(Guid userId);
+        Task UpdateOrderStatusAsync(Order order);
 	}
 }

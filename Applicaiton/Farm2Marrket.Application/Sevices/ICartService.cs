@@ -24,5 +24,7 @@ namespace Farm2Marrket.Application.Sevices
 		Task<List<PaidOrderDto>> GetPaidOrdersForUserAsync(string marketReceiverId);
 
         Task<List<SoldOrderDto>> GetSoldOrdersByUserIdAsync(Guid userId);
+
+        Task UpdateOrderStatusAsync(int orderId);
 	}
 }

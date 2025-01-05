@@ -149,7 +149,7 @@ namespace Farm2Market.API.Controllers
 
 
 
-
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
 		[HttpPost()]
 		public async Task<IActionResult> AddCategory([FromBody] CategoryDto categoryDto)
 		{
@@ -177,7 +177,7 @@ namespace Farm2Market.API.Controllers
 		}
 
 
-
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> PermaDeleteProduct(int id)
 		{

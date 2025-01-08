@@ -8,13 +8,9 @@ using System.Threading.Tasks;
 
 namespace Farm2Marrket.Application.Sevices
 {
-    public interface IUserService
+    public interface IFarmerService
     {
-        Task AddUser(User user );
-        Task<bool> ConfirmNumber(string id, int number);
-
-        Task<List<UserListDto>> GetActiveUsersAsync();
-    
-
+        Task<UpdateFarmerDto> GetFarmerByIdAsync(Guid farmerId);
+        Task<bool> UpdateFarmerAsync(Guid farmerId, UpdateFarmerDto farmerDto);
     }
 }

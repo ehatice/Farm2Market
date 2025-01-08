@@ -10,21 +10,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Farm2Market.Infrastructure.Repository
 {
-    public class UserRepository : IUserRepository
-    {
-        protected readonly AppDbContext _appDbContext;
-        private DbSet<User> _users;
+	public class UserRepository : IUserRepository
+	{
+		protected readonly AppDbContext _appDbContext;
+		private DbSet<User> _users;
 		private DbSet<Farmer> _farmers;
-		public UserRepository( AppDbContext context) {
-            _appDbContext = context;
-            _users = _appDbContext.Set<User>();
-            _farmers = _appDbContext.Set<Farmer>();
-        }
-        public async Task AddAsync(User user)
-        {
-            _users.Add(user);
-            _appDbContext.SaveChanges();
-        }
+		public UserRepository(AppDbContext context)
+		{
+			_appDbContext = context;
+			_users = _appDbContext.Set<User>();
+			_farmers = _appDbContext.Set<Farmer>();
+		}
+		public async Task AddAsync(User user)
+		{
+			_users.Add(user);
+			_appDbContext.SaveChanges();
+		}
 
 
 		public async Task UpdateAsync(Product product)
@@ -34,7 +35,7 @@ namespace Farm2Market.Infrastructure.Repository
 		}
 
 		public async Task<int> GetConfirmNumber(string id)
-        {
+		{
 			var farmer = await _appDbContext.Set<AppUser>().FirstOrDefaultAsync(x => x.Id == id);
 
 			if (farmer == null)
@@ -62,12 +63,25 @@ namespace Farm2Market.Infrastructure.Repository
 			if (entity != null)
 			{
 				entity.EmailConfirmed = true;
-				
+
 				_appDbContext.Entry(entity).State = EntityState.Modified;
 				await _appDbContext.SaveChangesAsync();
 				return true;
 			}
 			else { return false; }
 		}
+
+		//admin işlemleri 
+
+		public async Task<List<AppUser>> GetUsersByAsync()
+		{
+			return await _appDbContext.Set<AppUser>()
+			.Where(user => !user.IsActive)
+			.ToListAsync();
+		}
+
+
+
+		
 	}
 }

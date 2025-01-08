@@ -20,14 +20,19 @@ namespace Farm2Market.API.Controllers
         private readonly SignInManager<AppUser> _signInManager;
 		private readonly IEmailService _emailService;
 		private readonly IUserService _userService;
-		public AuthController(UserManager<AppUser> service, SignInManager<AppUser> identityUser, IEmailService emailService,IUserService userService, IAppUserService appUserService )
+        private readonly IFarmerService _farmerService;
+        private readonly IMarketService _marketService;
+
+        public AuthController(UserManager<AppUser> service, SignInManager<AppUser> identityUser, IEmailService emailService,IUserService userService, IAppUserService appUserService, IFarmerService farmerService, IMarketService marketService)
         {
             _userManager = service;
             _signInManager = identityUser;
 			_emailService = emailService;
             _userService = userService;
             _appUserService = appUserService;
-		}
+            _farmerService = farmerService;
+            _marketService = marketService;
+        }
 
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         //[Authorize(AuthenticationSchemes = "Bearer")]
@@ -197,7 +202,131 @@ namespace Farm2Market.API.Controllers
             };
             return Ok(ApiResponse<LoginResponseDto>.Success(LoginResponse));
         }
+
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPut()]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
+        {
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var parsedUserId))
+                return Unauthorized("Geçerli bir kullanýcý bulunamadý.");
+            var farmer = await _userManager.FindByIdAsync(userId);
+
+
+            var result = await _userManager.ChangePasswordAsync(farmer,changePasswordDto.CurrentPassword,changePasswordDto.NewPassword);
+
+
+            if (result.Succeeded)
+            {
+                return Ok("Kullanýcý bilgileri baþarýyla güncellendi.");
+            }
+
+
+            return BadRequest("Kullanýcý bulunamadý veya güncelleme baþarýsýz oldu.");
+        }
+
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet()]
+        public async Task<IActionResult> GetFarmerProfile()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var farmerId))
+                return Unauthorized("User ID not found or invalid.");
+
+            var farmer = await _farmerService.GetFarmerByIdAsync(farmerId);
+            if (farmer == null)
+                return NotFound("Farmer not found.");
+
+            return Ok(farmer);
+        }
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPut()]
+        public async Task<IActionResult> UpdateFarmerProfile([FromBody] UpdateFarmerDto farmerDto)
+        {
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var parsedUserId))
+                return Unauthorized("Geçerli bir kullanýcý bulunamadý.");
+
+
+            var result = await _farmerService.UpdateFarmerAsync(parsedUserId, farmerDto);
+
+
+            if (result)
+            {
+                return Ok("Kullanýcý bilgileri baþarýyla güncellendi.");
+            }
+
+
+            return BadRequest("Kullanýcý bulunamadý veya güncelleme baþarýsýz oldu.");
+        }
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet()]
+        public async Task<IActionResult> GetMarketProfile()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var marketId))
+                return Unauthorized("User ID not found or invalid.");
+
+            var market = await _marketService.GetMarketByIdAsync(marketId);
+            if (market == null)
+                return NotFound("Market not found.");
+            return Ok(market);
+        }
+
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPut()]
+        public async Task<IActionResult> UpdateMarketProfile([FromBody] UpdateMarketDto marketDto)
+        {
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var parsedUserId))
+                return Unauthorized("Geçerli bir kullanýcý bulunamadý.");
+
+
+            var result = await _marketService.UpdateMarketAsync(parsedUserId, marketDto);
+
+
+            if (result)
+            {
+                return Ok("Kullanýcý bilgileri baþarýyla güncellendi.");
+            }
+
+
+            return BadRequest("Kullanýcý bulunamadý veya güncelleme baþarýsýz oldu.");
+        }
+
+        //admin 
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        [HttpGet()]
+        public async Task<IActionResult> GetUsers()
+        {
+            var users = await _userService.GetActiveUsersAsync();
+
+            if (users == null || !users.Any())
+            {
+                return NotFound("No active users found.");
+            }
+
+            return Ok(users);
+        }
+
     }
+
 }
 
 

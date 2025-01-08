@@ -146,7 +146,8 @@ namespace Farm2Marrket.Application.Manager
                     ProductId = oi.ProductId,
                     Quantity = oi.Quantity,
                     Price = oi.Price,
-                    Total = oi.Quantity * oi.Price
+                    Total = oi.Quantity * oi.Price,
+                    ProductName = oi.ProductName,
                 }).ToList()
             };
 

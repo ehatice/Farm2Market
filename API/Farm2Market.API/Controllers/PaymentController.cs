@@ -9,8 +9,8 @@ using Farm2Market.Domain.Interfaces;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 
+[ApiController]
 [Route("api/[controller]")]
-[ApiController][Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
 public class PaymentController : ControllerBase
 {
 	private readonly StripeSettings _stripeSettings;

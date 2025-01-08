@@ -12,5 +12,10 @@ namespace Farm2Market.Domain.Entities
         public string UserName { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
+
+        public static ReadOnlySpan<char> FindFirst(string nameIdentifier)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

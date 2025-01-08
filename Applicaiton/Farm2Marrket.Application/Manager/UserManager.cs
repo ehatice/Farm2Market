@@ -1,5 +1,6 @@
 ﻿using Farm2Market.Domain;
 using Farm2Market.Domain.Entities;
+using Farm2Marrket.Application.DTOs;
 using Farm2Marrket.Application.Sevices;
 using System;
 using System.Collections.Generic;
@@ -33,5 +34,22 @@ namespace Farm2Marrket.Application.Manager
             else { return false; }
         }
 
-	}
+        //admin işlemleri
+        public async Task<List<UserListDto>> GetActiveUsersAsync()
+        {
+            var users = await _userRepository.GetUsersByAsync();
+
+            return users.Select(user => new UserListDto
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                EmailConfirmed = user.EmailConfirmed,
+                UserRole = user.UserRole,
+                IsActive = user.IsActive,
+            }).ToList();
+        }
+
+
+
+    }
 }

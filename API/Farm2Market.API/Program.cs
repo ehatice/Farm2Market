@@ -64,6 +64,8 @@ builder.Services.AddIdentityCore<AppUser>() //Role kendimiz yazdýk identity olma
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+
+
 //builder.Services.AddIdentity<AppUser, IdentityRole>()
 //   .AddEntityFrameworkStores<AppDbContext>()
 //    .AddDefaultTokenProviders();
@@ -149,6 +151,15 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 builder.Services.AddScoped<IMarketFavoriteService, MarketFavoriteManager>();
 builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
+
+builder.Services.AddScoped<IMarketService, MarketManager>();
+builder.Services.AddScoped<IMarketRepository, MarketRepository>();
+
+
+builder.Services.AddScoped<IFarmerService, FarmerManager>();
+builder.Services.AddScoped<IFarmerRepository, FarmerRepository>();
+
+
 
 
 
